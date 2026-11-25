@@ -63,7 +63,7 @@ theorem SectorSpectralResolution.density_summable (d : SectorSpectralResolution)
     mul_nonneg (d.weight_nonneg k) (RCLike.nonneg_iff.mp hx.trace_nonneg).1
   have hi (k) : Integrable (f k) := (mass (d.component k)).1.const_mul _
   have hm (k) : eLpNorm (f k) 1 volume = ENNReal.ofReal (d.weight k*(d.component k).particles) := by
-    rw [eLpNorm_one_eq_lintegral_enorm]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hi k).aestronglyMeasurable]
     calc
       _ = ∫⁻ x, ENNReal.ofReal (f k x) := by
         apply lintegral_congr_ae
@@ -72,7 +72,7 @@ theorem SectorSpectralResolution.density_summable (d : SectorSpectralResolution)
       _ = ENNReal.ofReal (∫ x, f k x) := (ofReal_integral_eq_lintegral_ofReal (hi k) (hp k)).symm
       _ = _ := by simp [f,integral_const_mul,(mass (d.component k)).2]
   have hn : ∀ᵐ x : Position, Summable (fun k => ‖f k x‖) := by
-    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl (fun k => (hi k).1)
+    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl
     simpa only [hm] using d.particles_summable.tsum_ofReal_ne_top
   have hpos : ∀ᵐ x : Position, ∀ k, ((d.component k).matrixDensity x).PosSemidef :=
     ae_all_iff.mpr fun k => (d.component k).matrixDensity_posSemidef

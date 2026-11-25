@@ -45,7 +45,6 @@ private theorem wave_scalar_mass {n : ℕ} (ψ : Wave (n+1)) {w : Position → �
   have he : MeasurePreserving e.symm (volume.prod volume) (volume : Measure (Space (n+1))) := (volume_preserving_piFinSuccAbove _ 0).symm
   have econs (z : Position × Space n) : e.symm z = Fin.cons z.1 z.2 := by
     simp [e,MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   let f := fun i (z : Space (n+1)) => w (z i)*spinSum ψ z
   let g := fun p : Position × Space n => spinSum ψ (Fin.cons p.1 p.2)
   have hsp : Integrable (spinSum ψ) := integrable_finsetSum _ fun s _ =>

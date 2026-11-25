@@ -116,7 +116,7 @@ theorem MatrixSobolevMorrey.density_representative {p C θ : ℝ} (H : MatrixSob
     intro x
     have hx := dense x
     change x ∈ closure (v ⁻¹' {A : SpinMatrix | A.PosSemidef}) at hx
-    rwa [(Matrix.posSemidef_is_closed.preimage hv).closure_eq] at hx
+    rwa [(isClosed_setOfPred_posSemidef.preimage hv).closure_eq] at hx
   let V : Density := ⟨v, pos⟩
   let N : Density := ⟨V.power θ⁻¹, fun x => by
     rw [Density.power, ← (V.positive x).1.cfc_eq]
@@ -124,9 +124,8 @@ theorem MatrixSobolevMorrey.density_representative {p C θ : ℝ} (H : MatrixSob
   have hc : Continuous N.matrix := continuous_cfc_power V hv (inv_pos.mpr hθ)
   refine ⟨N, ?_, hc, fun _ ha => continuous_cfc_power N hc ha⟩
   filter_upwards [heq] with x hx
-  change (V.positive x).1.cfc (fun t => t^θ⁻¹) = D.matrix x
-  rw [← (V.positive x).1.cfc_eq]
-  change cfc (fun t : ℝ => t^θ⁻¹) (v x) = D.matrix x
+  dsimp only [N, V, Density.power]
+  rw [← (pos x).1.cfc_eq]
   rw [hx, Density.power, ← (D.positive x).1.cfc_eq,
     ← cfc_comp (fun t : ℝ => t^θ⁻¹) (fun t : ℝ => t^θ) _ (D.positive x).1.isSelfAdjoint
       (Real.continuous_rpow_const (inv_nonneg.mpr hθ.le)).continuousOn

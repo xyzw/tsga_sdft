@@ -26,7 +26,7 @@ theorem tileDensityDomain_of_representable (embed : MatrixSobolevEmbeddingFour)
       congrArg (fun a : SpinMatrix => a i j) (D.sqrt_mul_self x).symm
     simp_rw [eq]
     exact Finset.aemeasurable_fun_sum _ fun k _ => (hs i k).mul (hs k j)
-  refine tileDensityDomain_of_regular h (aemeasurable_pi_lambda _ fun i => aemeasurable_pi_lambda _ (hm i)) ?_
+  refine tileDensityDomain_of_regular h (AEMeasurable.of_eval fun i => AEMeasurable.of_eval (hm i)) ?_
   simpa only [sqrt_hilbertSchmidt_sq] using embed (D.power (1/2)) S h.weak
     (by simpa only [sqrt_hilbertSchmidt_sq] using h.charge) h.grad
 

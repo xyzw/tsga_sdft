@@ -60,10 +60,8 @@ theorem local_rotation_bound {D : Density} {U : Position → unitary SpinMatrix}
     rw [hk, hW] at hab
     have hi := lo Γ hΓ
     have hg' := mul_le_mul_of_nonneg_left hgW (show 0 ≤ 1+1/ε by positivity)
-    have he : energy D'.matrix = levyLieb D'.matrix - d := by
-      unfold energy d
-      congr 1
-      exact congrArg hartree (funext (conjugated_charge D U))
+    have he : energy D'.matrix = levyLieb D'.matrix - d :=
+      congrArg (fun ρ => levyLieb D'.matrix - hartree ρ) (funext (conjugated_charge D U))
     rw [he, ← le_sub_iff_add_le, div_le_iff₀ hpos]
     change _ - (ε*L*chargeMoment D (4/3) + (1+1/ε)*W) ≤ _
     dsimp [d] at *

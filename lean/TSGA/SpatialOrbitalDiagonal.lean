@@ -20,11 +20,12 @@ theorem OneBody.diagonal_summable {d : ℕ} (γ : OneBody d) :
     have h := congrArg Complex.re (γ.orthonormal k k)
     simpa [Complex.conj_mul', ← Complex.ofReal_pow, integral_complex_ofReal, Fin.sum_univ_two] using h
   have hm (k) : eLpNorm (F k) 1 volume = ENNReal.ofReal (γ.occupation k) := by
-    rw [eLpNorm_one_eq_lintegral_enorm, ← ofReal_integral_norm_eq_lintegral_enorm (hF k)]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hF k).aestronglyMeasurable,
+      ← ofReal_integral_norm_eq_lintegral_eNorm (hF k)]
     simp only [Real.norm_of_nonneg (hp k _), F, integral_const_mul,
       integral_finsetSum _ (fun s _ => hi k s), hunit, mul_one]
   have hn : ∀ᵐ x : Point d, Summable fun k => ‖F k x‖ := by
-    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl (fun k => (hF k).1)
+    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl
     simpa only [hm] using γ.finite_trace.tsum_ofReal_ne_top
   filter_upwards [hn] with x hx
   intro i j

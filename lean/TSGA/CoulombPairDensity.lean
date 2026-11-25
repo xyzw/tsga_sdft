@@ -117,7 +117,6 @@ private theorem pairSlice {n : ℕ} {f : Space (n+2) → ℝ} (hf : Integrable f
     (hu (n+1)).comp (((MeasurePreserving.id (μ := (volume : Measure Position))).prod (hu n)).comp volume_preserving_prodAssoc)
   have hu' (k : ℕ) (z : Position × Space k) : (u k).symm z = Fin.cons z.1 z.2 := by
     simp [u,MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   have heq (z : PairSpace × Space n) : e z = Fin.cons z.1.1 (Fin.cons z.1.2 z.2) := by
     change (u _).symm (z.1.1,(u _).symm (z.1.2,z.2)) = _
     simp only [hu']

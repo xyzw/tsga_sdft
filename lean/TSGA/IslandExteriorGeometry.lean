@@ -41,7 +41,7 @@ theorem outerRootDerivative_fisher_le (G : Z → Position → Fin 3 → ℝ) (ω
   let s := H.window ω x
   let a := fun n => ∏ k ∈ s.erase n, Real.sqrt (1-H.outer x (P.mark ω k))
   have ha (n) : a n ∈ Set.Icc 0 1 := ⟨Finset.prod_nonneg fun _ _ => Real.sqrt_nonneg _,
-    Finset.prod_le_one (fun _ _ => Real.sqrt_nonneg _) (fun k _ => Real.sqrt_le_one.mpr (by linarith [(H.outer_range x (P.mark ω k)).1]))⟩
+    Finset.prod_le_one₀ (fun _ _ => Real.sqrt_nonneg _) (fun k _ => Real.sqrt_le_one.mpr (by linarith [(H.outer_range x (P.mark ω k)).1]))⟩
   have hsum : (∑ n ∈ s, (a n)^2) ≤ (s.card : ℝ) := by
     simpa only [Finset.sum_const, nsmul_eq_mul,mul_one] using
       (Finset.sum_le_sum (s := s) (fun n _ => pow_le_one₀ (ha n).1 (ha n).2 (n:=2)))

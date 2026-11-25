@@ -68,6 +68,7 @@ def referenceDensity (M : Density) (c : Position) : Density where
   matrix := SpectralExtrema.referenceFrame M c
   positive x := inSpinFrame_pos _ (fun i => (M.positive x).eigenvalues_nonneg i)
 
+attribute [local irreducible] inSpinFrame in
 /-- The spectral-extrema construction provides both ordered pairs and a
 Hilbert–Schmidt cap from componentwise eigenvalue oscillation. -/
 theorem spectral_ordered_pairs {M : Density} (E : SpectralExtrema M K) (c : Position) {η : ℝ}
@@ -86,9 +87,11 @@ theorem spectral_ordered_pairs {M : Density} (E : SpectralExtrema M K) (c : Posi
     have hs (i : Fin 2) : (a i-b i)^2 ≤ η^2 := by
       simpa only [sq_abs] using pow_le_pow_left₀ (abs_nonneg _) (hab i) 2
     nlinarith only [h,hs 0,hs 1,sq_nonneg η,hη]
-  exact ⟨(E.ordered c hx).1, (E.ordered c hx).2,
-    bound _ _ (fun i => osc x hx _ (E.min_mem i) i),
-    bound _ _ (fun i => osc _ (E.max_mem i) x hx i)⟩
+  refine ⟨(E.ordered c hx).1, (E.ordered c hx).2, ?_, ?_⟩
+  · simp only [referenceDensity, SpectralExtrema.referenceFrame, SpectralExtrema.lowerMatrix]
+    exact bound _ _ (fun i => osc x hx _ (E.min_mem i) i)
+  · simp only [referenceDensity, SpectralExtrema.referenceFrame, SpectralExtrema.upperMatrix]
+    exact bound _ _ (fun i => osc _ (E.max_mem i) x hx i)
 
 /-- In the common eigenbasis the effective residual cap is controlled
 by the oscillation of the θ power in Proposition 4.16. -/
@@ -121,6 +124,7 @@ inductive OrderedFluctuation {B D : Density} (u : IslandTrial μ (B.matrix+D.mat
   | estimate : (u.fluctuation ≤ 12*C*ε*islandBackground B S + 6*C*(r^2/ε)*(∫ x, D.charge x^2)) →
       OrderedFluctuation u S ν ε r C
 
+attribute [local irreducible] SpiralTaper.field SpiralTaper.residual in
 /-- Representability and localization operators for a single ordered
 pair after applying the actual taper and constant wavevector. -/
 structure OrderedSpiralAddition (μ : Measure Ω) [IsProbabilityMeasure μ] (ν : Measure Y) [IsProbabilityMeasure ν]
@@ -307,6 +311,7 @@ def SpiralTaper.phaseField (t : SpiralTaper K) (M : Density) (φ : Phase) : Dens
   matrix x := (t.shape x : ℂ) • rotate (φ.value x) (M.matrix x)
   positive x := (rotate_posSemidef _ (M.positive x)).smul (Complex.zero_le_real.mpr (t.range x).1)
 
+attribute [local irreducible] SpiralTaper.field SpiralTaper.phaseField constantSpinDensity in
 /-- Both density additions and both physical gauge changes on a single tile.
 The phase gauge is the transition from the local constant wavevector to φ. -/
 structure CoulombTileReplacement (μ : Measure Ω) [IsProbabilityMeasure μ] (ν : Measure Y) [IsProbabilityMeasure ν]

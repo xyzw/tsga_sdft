@@ -29,9 +29,7 @@ private theorem conjugated_sqrt (D : Density) (U : Position → unitary SpinMatr
     (conjugatedDensity D U).power (1/2) x =
       (U x : SpinMatrix) * D.power (1/2) x * star (U x : SpinMatrix) := by
   let e := Unitary.conjStarAlgAut ℂ SpinMatrix (U x)
-  have he : Continuous e := by
-    change Continuous (fun m : SpinMatrix => (U x : SpinMatrix) * m * star (U x : SpinMatrix))
-    fun_prop
+  have he : Continuous e := e.toAlgEquiv.toLinearMap.continuous_of_finiteDimensional
   have h := StarAlgHomClass.map_cfc (S := ℂ) e (fun t : ℝ => t^(1/2 : ℝ)) (D.matrix x)
     (Real.continuous_rpow_const (by norm_num : 0 ≤ (1/2 : ℝ))).continuousOn he
     (D.positive x).isHermitian.isSelfAdjoint ((conjugatedDensity D U).positive x).isHermitian.isSelfAdjoint

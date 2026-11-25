@@ -51,7 +51,7 @@ private theorem lipschitz_shell {f : Position → ℝ} {L : ℝ≥0} (hf : Lipsc
         rw [eq.lineDeriv_eq]; simp [lineDeriv]
       simp [z,U,hx]
   have H := hi.mono' (Finset.aestronglyMeasurable_fun_sum _ fun i _ =>
-    ((hf.memLp_lineDeriv (μ := volume) (direction i)).1.aemeasurable.pow_const (2:ℕ)).aestronglyMeasurable)
+    ((hf.memLp_lineDeriv (μ := volume) (direction i)).aemeasurable.pow_const (2:ℕ)).aestronglyMeasurable)
     (ae_of_all _ (fun x => (Real.norm_of_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg (g x i))).le.trans (bound x)))
   refine ⟨g,weak_line hf,H,(integral_mono H hi bound).trans_eq ?_⟩
   simp [U,integral_indicator_const,hs,smul_eq_mul,mul_comm]

@@ -65,7 +65,7 @@ private theorem finite_unionRoot (f : ℕ → Position → ℝ) (r : ∀ i x, f 
     let p (x : Position) := ∏ j ∈ s, (1-f j x)
     have pp (x : Position) : p x ∈ Icc 0 1 :=
       ⟨Finset.prod_nonneg (fun j _ => sub_nonneg.mpr (r j x).2),
-        Finset.prod_le_one (fun j _ => sub_nonneg.mpr (r j x).2) (fun j _ => sub_le_self _ (r j x).1)⟩
+        Finset.prod_le_one₀ (fun j _ => sub_nonneg.mpr (r j x).2) (fun j _ => sub_le_self _ (r j x).1)⟩
     have rh (x) : Real.sqrt (f i x) ∈ Icc 0 1 := ⟨Real.sqrt_nonneg _,Real.sqrt_le_one.mpr (r i x).2⟩
     have ru (x) : Real.sqrt (1-p x) ∈ Icc 0 1 :=
       ⟨Real.sqrt_nonneg _,Real.sqrt_le_one.mpr (sub_le_self _ (pp x).1)⟩

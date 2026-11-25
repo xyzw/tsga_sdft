@@ -22,7 +22,6 @@ private theorem front_preserves (n : ℕ) : MeasurePreserving (fun p : Position 
   have he : (fun p : Position × Space n => Fin.cons p.1 p.2) = e.symm := by
     funext p
     simp [e,MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   rw [he]
   exact (volume_preserving_piFinSuccAbove (fun _ => Position) 0).symm
 
@@ -39,8 +38,7 @@ private theorem one_duality {n : ℕ} (v : Spins (n+1) → Space (n+1) → ℂ)
     have hj := (hv (Fin.cons j s)).comp_measurePreserving (front_preserves n)
     have hi := (hv (Fin.cons i s)).comp_measurePreserving (front_preserves n)
     apply hj.integrable_mul (q := 2)
-    exact hi.of_le (Complex.continuous_conj.comp_aestronglyMeasurable hi.1)
-      (ae_of_all _ fun x => (Complex.norm_conj _).le)
+    exact hi.star
   have ha : ∀ᵐ x : Position, ∀ i j s, Integrable (fun y : Space n => f i j s (x,y)) :=
     ae_all_iff.mpr fun i => ae_all_iff.mpr fun j => ae_all_iff.mpr fun s => (h i j s).prod_right_ae
   have hi (i j : Fin 2) (s : Spins n) := (h i j s).integral_prod_left
@@ -92,15 +90,18 @@ theorem sectorOneObservable_pullback {n : ℕ} (v : Spins (n+1) → Space (n+1) 
 theorem sectorOneObservable_congr {a : Type*} [Fintype a] [DecidableEq a] {n : ℕ}
     {v w : (Fin (n+1) → a) → Space (n+1) → ℂ} (h : ∀ t, v t =ᵐ[volume] w t)
     (E : Set Position) (A : Matrix a a ℂ) : sectorOneObservable v E A = sectorOneObservable w E A := by
-  have ha := ae_all_iff.mpr h
-  have hc := (front_preserves n).quasiMeasurePreserving.ae ha
+  have ha : ∀ᵐ z : Space (n+1), ∀ t, v t z = w t z := ae_all_iff.mpr h
+  have hc : ∀ᵐ p : Position × Space n ∂volume.prod volume,
+      ∀ t, v t (Fin.cons p.1 p.2) = w t (Fin.cons p.1 p.2) :=
+    (front_preserves n).quasiMeasurePreserving.ae ha
   have hs := Measure.ae_ae_of_ae_prod hc
   unfold sectorOneObservable
-  congr 1
+  apply congrArg (fun z : ℂ => (n+1 : ℕ) * z)
   apply integral_congr_ae
   filter_upwards [ae_restrict_of_ae hs] with x hx
   apply integral_congr_ae
   filter_upwards [hx] with y hy
-  simp only [hy]
+  exact congrArg (fun z => star z ⬝ᵥ ((A ⊗ₖ (1 : Matrix (Fin n → a) (Fin n → a) ℂ)) *ᵥ z))
+    (funext fun t : a × (Fin n → a) => hy (Fin.cons t.1 t.2))
 
 end TSGA.ManyBody

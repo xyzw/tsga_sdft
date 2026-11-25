@@ -25,7 +25,7 @@ private theorem row_gram {α : Type*} [MeasurableSpace α] {μ : Measure α}
       c*conj c*(∫ x, u x*conj (u x) ∂μ) - c*conj d*(∫ x, u x*conj (v x) ∂μ) -
       d*conj c*(∫ x, v x*conj (u x) ∂μ) + d*conj d*(∫ x, v x*conj (v x) ∂μ) := by
   have hconj {g : α → ℂ} (h : MemLp g 2 μ) : MemLp (fun x => conj (g x)) 2 μ :=
-    h.of_le (Complex.continuous_conj.comp_aestronglyMeasurable h.1) (ae_of_all _ fun x => (Complex.norm_conj _).le)
+    h.of_le (Complex.continuous_conj.comp_aestronglyMeasurable h.aestronglyMeasurable) (ae_of_all _ fun x => (Complex.norm_conj _).le)
   have pair {f g : α → ℂ} (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) (t : ℂ) :
       Integrable (fun x => t*(f x*conj (g x))) μ := (hf.integrable_mul (hconj hg)).const_mul t
   have eqn (x : α) : ((‖c*u x-d*v x‖^2 : ℝ) : ℂ) =
@@ -113,7 +113,6 @@ theorem Wave.row_zero {n : ℕ} (ψ : Wave (n+1)) {c d : ℂ}
   have he := (volume_preserving_piFinSuccAbove (fun _ : Fin (n+1) => Position) 0).symm
   have heq (z : Position × Space n) : e.symm z = Fin.cons z.1 z.2 := by
     simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   have hi : Integrable (rowSection ψ c d t) :=
     (((ψ.square_integrable (Fin.cons 0 t)).const_mul c).sub
       ((ψ.square_integrable (Fin.cons 1 t)).const_mul d)).integrable_norm_pow (p := 2) (by decide)

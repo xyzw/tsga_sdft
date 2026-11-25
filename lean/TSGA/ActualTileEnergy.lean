@@ -50,9 +50,9 @@ theorem rotated_tileDensityDomain (chain : WeakPhaseProduct) {D : Density} {φ :
   have charge : (rotatedDensity D φ).charge = D.charge := funext (rotated_charge D φ)
   refine ⟨Z,tileDensityDomain_of_regular ⟨charge.symm ▸ hr.charge_L1,weak,grad⟩ ?_
     (by simpa only [rotated_charge] using hr.charge_L2.integrable_sq),cost⟩
-  apply aemeasurable_pi_lambda
+  apply AEMeasurable.of_eval
   intro i
-  apply aemeasurable_pi_lambda
+  apply AEMeasurable.of_eval
   intro j
   change AEMeasurable (fun x => rotate (φ.value x) (D.matrix x) i j) volume
   simp_rw [rotate_by_entry]
@@ -81,8 +81,11 @@ theorem actualWindowEnergy_measurable (O : TileOrientationLaw) (frames : TileFra
   let w := fun (p : (ℝ × O.Frames) × Position) x => actualTileShape O η side ℓ p.1 (p.2-x)
   change Measurable (fun p => energy (fun x => (w p x : ℂ) • D.matrix x))
   refine measurable_variableWindowEnergy (F := D.matrix) (B := 1) borel entries w ?_ ?_
-  · exact (measurable_actualTileShape O frames η side ℓ).comp
-      ((measurable_fst.comp measurable_fst).prodMk ((measurable_snd.comp measurable_fst).sub measurable_snd))
+  · have coordinates : Measurable (fun z : ((ℝ × O.Frames) × Position) × Position =>
+        (z.1.1, z.1.2 - z.2)) :=
+      (measurable_fst.comp measurable_fst).prodMk ((measurable_snd.comp measurable_fst).sub measurable_snd)
+    simpa only [w, Function.comp_def, Function.uncurry] using
+      (measurable_actualTileShape O frames η side ℓ).comp coordinates
   · intro p x
     have b := smoothedIndicator_bounds (tetrahedron (tileDilation p.1.1*tileSideLength side ℓ)) η
       (tileDilation_pos p.1.1) (O.frame p.1.2 (-(p.2-x)))

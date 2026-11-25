@@ -126,6 +126,36 @@ Setting the phase to zero gives the noncollinear local spin density approximatio
 \clearpage
 \tableofcontents
 
+\begin{figure}[!b]
+\centering
+\begin{tikzpicture}[>=stealth]
+\def\sswA{0.26}
+\def\sswR{0.1}
+\def\sswNx{25}
+\def\sswNy{13}
+\pgfmathsetmacro{\sswLx}{\sswNx*\sswA}
+\pgfmathsetmacro{\sswLy}{\sswNy*\sswA}
+\begin{scope}[shift={(-1.4,{\sswLy/2})}]
+\draw[->] (0,0)--(0.5,0) node[right]{$\mathbf{e}_1$};
+\draw[->] (0,0)--(0,0.5) node[above]{$\mathbf{e}_2$};
+\draw (0,0) circle[radius=0.09]; \fill (0,0) circle[radius=0.025];
+\node[below left] at (0,0) {$\mathbf{e}_3$};
+\end{scope}
+\foreach \i in {0,...,\sswNx}{\foreach \j in {0,...,\sswNy}{
+  \pgfmathsetmacro{\a}{15*(2*\i+\j-27)}
+  \draw[->,line width=0.45pt,blue!75!black] ({\i*\sswA-\sswR*cos(\a)},{\j*\sswA-\sswR*sin(\a)})--++(\a:2*\sswR);}}
+\begin{scope}
+\clip (-0.25,-0.25) rectangle (\sswLx+0.25,\sswLy+0.25);
+\foreach \c in {27,51}{
+  \draw[black!70,densely dashed,semithick] ({(\c*\sswA+0.25)/2},-0.25)--({(\c*\sswA-\sswLy-0.25)/2},\sswLy+0.25);}
+\end{scope}
+\foreach \c/\lab in {27/0,51/2\pi}{
+  \node[above] at ({(\c*\sswA-\sswLy-0.25)/2},\sswLy+0.25) {$\mathbf{q}\cdot\mathbf{x}=\lab$};}
+\draw[->,thick] (\sswLx+0.5,{\sswLy/2-0.5})--++({1.2*cos(atan(1/2))},{1.2*sin(atan(1/2))}) node[right]{$\mathbf{q}$};
+\end{tikzpicture}
+\caption{The SSW in a plane containing $\mathbf{q}$. The arrows show the transverse magnetization $(m_1,m_2)$, seen from the top along the third axis $\mathbf{e}_3$ of spin space.}\label{fig:SSW}
+\end{figure}
+
 \clearpage
 \section{Introduction}
 
@@ -175,7 +205,7 @@ Here the functions $\rho^\pm(\mathbf{x})=\big(\rho(\mathbf{x})\pm|\mathbf{m}(\ma
 
 \medskip
 
-\noindent\textbf{A fixed-axis transverse spin-gradient approximation.} Eich and Gross~\cite{eich2013transverse} proposed using the \emph{spin-spiral wave} (SSW) state as a reference for the exchange-correlation energy. In this state the total density is constant and the magnetization rotates about a fixed axis with wavevector $\mathbf{q}$, see \cref{fig:SSW}. We call the electron gas in this state the \emph{SSW gas}. Eich and Gross determine the local spiral parameters from combinations of first and second derivatives of the magnetization that are invariant under global spin rotations. In our variant for the indirect energy $E(\bm{\rho})$, every reference spiral rotates about the third spin axis $\mathbf{e}_3$. Write the transverse magnetization as $m_1+im_2=a e^{i\varphi}$ with real amplitude $a$ and phase $\varphi$. With $\grad\varphi$ as the local wavevector, our approximation reads
+\noindent\textbf{The transverse spin-gradient approximation.} Eich and Gross~\cite{eich2013transverse} proposed using the \emph{spin-spiral wave} (SSW) state as a reference for the exchange-correlation energy. In this state the total density is constant and the magnetization rotates about a fixed axis with wavevector $\mathbf{q}$, see \cref{fig:SSW}. We call the electron gas in this state the \emph{SSW gas}. Eich and Gross determine the local spiral parameters from combinations of first and second derivatives of the magnetization that are invariant under global spin rotations. In our variant for the indirect energy $E(\bm{\rho})$, every reference spiral rotates about the third spin axis $\mathbf{e}_3$. Write the transverse magnetization as $m_1+im_2=a e^{i\varphi}$ with real amplitude $a$ and phase $\varphi$. With $\grad\varphi$ as the local wavevector, our approximation reads
 \begin{equation}\label{eq:TSGA}
  E(\bm{\rho})\approx\int_{\RR^3}e_\SSW\big(\bm{\rho}(\mathbf{x}),\grad\varphi(\mathbf{x})\big)\,\dd \mathbf{x},\qquad\grad\varphi=\frac{m_1\grad m_2-m_2\grad m_1}{m_1^2+m_2^2}.
 \end{equation}
@@ -189,7 +219,7 @@ To state our main estimate, let $\bm{\rho}$ be a spin-polarized density and $\va
 \[
  \mathbf{U}_\varphi(\mathbf{x})=\begin{pmatrix}e^{-\frac i2\varphi(\mathbf{x})}&0\\0&e^{\frac i2\varphi(\mathbf{x})}\end{pmatrix}
 \]
-be the rotation of the spin through the angle $\varphi(\mathbf{x})$ about $\mathbf{e}_3$, and let $\wt{\bm{\rho}}=\mathbf{U}_\varphi^*\bm{\rho}\,\mathbf{U}_\varphi$ be the spin-polarized density in the rotating frame. Let $p>3$ and $2/p\le\theta<1$. Assume that $\rho\in L^1\cap L^2$, $\grad\sqrt{\wt{\bm{\rho}}}\in L^2$ and $\grad\wt{\bm{\rho}}^\theta\in L^p$. Assume also that $\varphi\in W^{2,p}_{\rm loc}(\RR^3)$ and that $\wt{\bm{\rho}}^{1/p}\in W^{1,p}_{\rm loc}$ on the open set $\{\grad\varphi\ne0\}$. If the three phase-dependent terms on the right are integrable, \cref{thm:LSSWA} gives
+be the rotation of the spin through the angle $\varphi(\mathbf{x})$ about $\mathbf{e}_3$, and write $\bm{\rho}=\mathbf{U}_\varphi\wt{\bm{\rho}}\,\mathbf{U}_\varphi^*$, where $\wt{\bm{\rho}}$ is the spin-polarized density in the rotating frame. Let $p>3$ and $2/p\le\theta<1$. Assume that $\rho\in L^1\cap L^2$, $\grad\sqrt{\wt{\bm{\rho}}}\in L^2$ and $\grad\wt{\bm{\rho}}^\theta\in L^p$. Assume also that $\varphi\in W^{2,p}_{\rm loc}(\RR^3)$ and that $\wt{\bm{\rho}}^{1/p}\in W^{1,p}_{\rm loc}$ on the open set $\{\grad\varphi\ne0\}$. If the three phase-dependent terms on the right are integrable, \cref{thm:LSSWA} gives
 \begin{multline}\label{eq:TSGA_estim_intro}
  \left|E(\bm{\rho})-\int_{\RR^3}e_\SSW\big(\wt{\bm{\rho}}(\mathbf{x}),\grad\varphi(\mathbf{x})\big)\,\dd\mathbf{x}\right|\\
  \le \epsilon\int_{\RR^3}\big(\rho+\rho^2+\rho|\grad\varphi|^2\big)
@@ -200,35 +230,7 @@ be the rotation of the spin through the angle $\varphi(\mathbf{x})$ about $\math
 \end{multline}
 for every $\epsilon>0$, where $b=\max\{2p,(1+3\theta)p\}-1$.
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[>=stealth]
-\def\sswA{0.26}
-\def\sswR{0.1}
-\def\sswN{23}
-\pgfmathsetmacro{\sswL}{\sswN*\sswA}
-\begin{scope}[shift={(-1.4,{\sswL/2})}]
-\draw[->] (0,0)--(0.5,0) node[right]{$\mathbf{e}_1$};
-\draw[->] (0,0)--(0,0.5) node[above]{$\mathbf{e}_2$};
-\draw (0,0) circle[radius=0.09]; \fill (0,0) circle[radius=0.025];
-\node[below left] at (0,0) {$\mathbf{e}_3$};
-\end{scope}
-\foreach \i in {0,...,\sswN}{\foreach \j in {0,...,\sswN}{
-  \pgfmathsetmacro{\a}{12*(2*\i+\j-24)}
-  \draw[->,line width=0.45pt,blue!75!black] ({\i*\sswA-\sswR*cos(\a)},{\j*\sswA-\sswR*sin(\a)})--++(\a:2*\sswR);}}
-\begin{scope}
-\clip (-0.25,-0.25) rectangle (\sswL+0.25,\sswL+0.25);
-\foreach \c in {24,54}{
-  \draw[black!70,densely dashed,semithick] ({(\c*\sswA+0.25)/2},-0.25)--({(\c*\sswA-\sswL-0.25)/2},\sswL+0.25);}
-\end{scope}
-\foreach \c/\lab in {24/0,54/2\pi}{
-  \node[above] at ({(\c*\sswA-\sswL-0.25)/2},\sswL+0.25) {$\mathbf{q}\cdot\mathbf{x}=\lab$};}
-\draw[->,thick] (\sswL+0.5,{\sswL/2-0.5})--++({1.2*cos(atan(1/2))},{1.2*sin(atan(1/2))}) node[right]{$\mathbf{q}$};
-\end{tikzpicture}
-\caption{The SSW in a plane containing $\mathbf{q}$. The arrows show the transverse magnetization $(m_1,m_2)$, seen from the top along the third axis $\mathbf{e}_3$ of spin space.}\label{fig:SSW}
-\end{figure}
-
- At each point $\mathbf{x}$ the reference spiral freezes $\wt{\bm{\rho}}$ at $\wt{\bm{\rho}}(\mathbf{x})$ and uses the affine approximation to $\varphi$ with wavevector $\grad\varphi(\mathbf{x})$. For the azimuthal phase in~\cref{eq:TSGA}, the magnetization in the rotating frame is $(a,0,m_3)$. Its length and its angle with $\mathbf{e}_3$ enter the reference energy through their local values. Their spatial derivatives and the variation of the wavevector enter the error bound~\cref{eq:TSGA_estim_intro}. We assume that the phase extends regularly across the zeros of $a$. Rotations of the spin about $\mathbf{e}_3$ preserve $e_\SSW$, so the integrand in~\cref{eq:TSGA_estim_intro} is $e_\SSW(\bm{\rho},\grad\varphi)$ as in~\cref{eq:TSGA}. 
+Like the LDA bound above, this estimate is interesting when its right side is small compared with the energy scale $\int(\rho+\rho^2+\rho|\grad\varphi|^2)$. Since $-C\rho_0^{4/3}\le e_\SSW(\bm{\rho}_0,\mathbf{q})\le C\big(\rho_0^{5/3}+\rho_0|\mathbf{q}|^2\big)$ by \cref{prop:SSW_properties} and \cref{cor:lower_bound_E_rho}, this scale bounds the TSGA integral in absolute value, so the first term is a relative error of order $\epsilon$. The other terms vanish formally for a single spin-spiral wave, where $\wt{\bm{\rho}}$ is constant and $\varphi(\mathbf{x})=\mathbf{q}\cdot\mathbf{x}+c$ is affine, and they measure the deviation from it. The terms in $\grad\sqrt{\wt{\bm{\rho}}}$ and $\grad\wt{\bm{\rho}}^\theta$ are those of the LDA bound, now for the density in the rotating frame. The Hessian term measures the variation of the local wavevector $\grad\varphi$. The last term measures the variation of $\wt{\bm{\rho}}$ weighted by the squared wavevector, and it comes from the kinetic energy of order $\rho|\grad\varphi|^2$ carried by the spiral. Its weight vanishes where $\grad\varphi=0$, so it is integrated only over $\{\grad\varphi\ne0\}$, and no regularity of $\wt{\bm{\rho}}^{1/p}$ is needed where the phase is locally constant. The estimate is therefore useful when $\wt{\bm{\rho}}$ and $\grad\varphi$ vary slowly, so that the gradient terms are small compared with $\int(\rho+\rho^2+\rho|\grad\varphi|^2)$ and $\epsilon$ can be chosen to balance them. The wavevector itself need not be small, only its variation. The magnetization may rotate quickly about $\mathbf{e}_3$, provided that it locally looks like a spin-spiral wave whose density and wavevector change slowly.
 
 When $\wt{\bm{\rho}}$ and $\grad\varphi$ are fixed profiles of $N^{-1/3}\mathbf{x}$ with finite error integrals and mean particle number $N$, \cref{eq:TSGA_estim_intro} gives an $O(N^{5/6})$ error when $\theta\le1/3$. If $\grad\wt{\bm{\rho}}^{1/p}\in L^p(\RR^3)$, a second estimate in \cref{thm:LSSWA} gives an $O(N^{5/6})$ error for all $p>3$. These rates are uniform up to full polarization, even for a wavevector of order one. The LSDA error can be proportional to $N$ for the same spin-spiral waves.
 
@@ -318,14 +320,6 @@ The proof is exactly the same as in the spinless case~\cite[Theorem~3.4]{lewin20
 
 The functional $F_\LL$ is convex. If $\bm{\rho}$ is diagonal, that is $\bm{\rho}=\diag(\rho_\spu,\rho_\spd)$, we recover the collinear functional of~\cite[Remark~6]{lewin2020local} where only the densities of spin-up and spin-down electrons are prescribed.
 
-\begin{remark}[Collinear and unpolarized cases]\label{rmk:collinear}
-Let $E(\rho_\spu,\rho_\spd)$ be the collinear functional of~\cite[Remark~6]{lewin2020local}, where only the diagonal entries of $\bm{\rho}_\Gamma$ are prescribed, and let $E(\rho)$ be the functional of~\cite{lewin2020local} with $q=2$, where only the total density is prescribed. Then
-\begin{equation*}
-E\begin{pmatrix}\rho_\spu&0\\0&\rho_\spd\end{pmatrix}=E(\rho_\spu,\rho_\spd),\qquad E\Big(\frac{\rho}{2}\iden_{\CC^2}\Big)=E(\rho).
-\end{equation*}
-The inequalities $\ge$ are obvious. For the converse, we average a state $\Gamma$ over the rotation $\mathbf{U}=\diag(i,-i)$ of the spin, that is, we take $\frac12(\Gamma+\GC_{\mathbf{U}}\Gamma \GC_{\mathbf{U}}^*)$ with $\GC_{\mathbf{U}}=\bigoplus_n\mathbf{U}^{\otimes n}$, respectively over all $\mathbf{U}\in\SU(2)$ with the Haar measure. This does not change the energy, and it replaces $\bm{\rho}_\Gamma$ by its diagonal part, respectively by $(\rho/2)\iden_{\CC^2}$.
-\end{remark}
-
 We denote by
 $$
 D(f,g):=\frac12\iint_{\RR^3\times\RR^3}\frac{f(\mathbf{x})g(\mathbf{y})}{|\mathbf{x}-\mathbf{y}|}\,\dd\mathbf{x}\,\dd\mathbf{y},\qquad D(f):=D(f,f),
@@ -335,6 +329,14 @@ the direct (Hartree) energy. Recall from the introduction that $E(\bm{\rho})=F_\
 T(\bm{\rho}):=\inf_{\substack{0\le \bm{\gamma}=\bm{\gamma}^*\le 1\\ \bm{\rho}_{\bm{\gamma}}=\bm{\rho}}}\Tr(-\lapl)\bm{\gamma}
 \end{equation}
 is the lowest possible kinetic energy. Here $\bm{\gamma}$ is an operator on $L^2(\RR^3,\CC^2)$ and $\bm{\rho}_{\bm{\gamma}}(\mathbf{x})=\bm{\gamma}(\mathbf{x},\mathbf{x})$.
+
+\begin{remark}[Collinear and unpolarized cases]\label{rmk:collinear}
+Let $E(\rho_\spu,\rho_\spd)$ be the collinear functional of~\cite[Remark~6]{lewin2020local}, where only the diagonal entries of $\bm{\rho}_\Gamma$ are prescribed, and let $E(\rho)$ be the functional of~\cite{lewin2020local} with $q=2$, where only the total density is prescribed. Then
+\begin{equation*}
+E\begin{pmatrix}\rho_\spu&0\\0&\rho_\spd\end{pmatrix}=E(\rho_\spu,\rho_\spd),\qquad E\Big(\frac{\rho}{2}\iden_{\CC^2}\Big)=E(\rho).
+\end{equation*}
+The inequalities $\ge$ are obvious. For the converse, we average a state $\Gamma$ over the rotation $\mathbf{U}=\diag(i,-i)$ of the spin, that is, we take $\frac12(\Gamma+\GC_{\mathbf{U}}\Gamma \GC_{\mathbf{U}}^*)$ with $\GC_{\mathbf{U}}=\bigoplus_n\mathbf{U}^{\otimes n}$, respectively over all $\mathbf{U}\in\SU(2)$ with the Haar measure. This does not change the energy, and it replaces $\bm{\rho}_\Gamma$ by its diagonal part, respectively by $(\rho/2)\iden_{\CC^2}$.
+\end{remark}
 
 \section{Main results}\label{sec:main}
 

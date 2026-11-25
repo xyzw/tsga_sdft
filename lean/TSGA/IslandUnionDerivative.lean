@@ -52,7 +52,7 @@ theorem weak_unionRootDerivative (product : WeakLocalProductRule) (chain : WeakS
   have mk := product (fun n x => 1-b n x) d W range (fun n i => mark (P.mark ω n) i)
     (fun x => (hw x).mono (fun y hy n hn => by simp [b,hy n hn]))
   have rp (x) : p x ∈ Set.Icc 0 1 := ⟨Finset.prod_nonneg fun n _ => (range n x).1,
-    Finset.prod_le_one (fun n _ => (range n x).1) (fun n _ => (range n x).2)⟩
+    Finset.prod_le_one₀ (fun n _ => (range n x).1) (fun n _ => (range n x).2)⟩
   simp_rw [eq] at hl ⊢
   intro i
   have hu := chain.complement p _ rp hl mk i

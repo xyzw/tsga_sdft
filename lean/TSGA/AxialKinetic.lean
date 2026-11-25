@@ -39,8 +39,9 @@ theorem sqrt_hilbertSchmidt_sq (D : Density) (x : Position) :
   let e := Unitary.conjStarAlgAut ℂ SpinMatrix h.eigenvectorUnitary
   let d : Fin 2 → ℂ := fun i => (Real.sqrt (h.eigenvalues i) : ℂ)
   have hroot : D.power (1/2) x = e (diagonal d) := by
-    simp only [Density.power, Matrix.IsHermitian.cfc, Real.sqrt_eq_rpow, d, e]
-    rfl
+    apply congrArg (fun v : Fin 2 → ℂ => e (diagonal v))
+    funext i
+    exact congrArg Complex.ofReal (Real.sqrt_eq_rpow (h.eigenvalues i)).symm
   have hstar : star (diagonal d) = diagonal d := by
     simp [Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose, Pi.star_def, d]
   have hs : D.power (1/2) x * star (D.power (1/2) x) = D.matrix x := by

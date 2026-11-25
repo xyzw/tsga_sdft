@@ -102,7 +102,6 @@ private theorem spinSlice_mass {n : ℕ} (ψ : Wave (n+1)) (s : Spins (n+1)) :
   have hg (x : Position) : spinSlice ψ s x = ∫ y, f (e.symm (x,y)) := by
     have h (z : Position × Space n) : e.symm z = Fin.cons z.1 z.2 := by
       simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
-      rfl
     simp only [h]
     rfl
   refine ⟨by rw [show spinSlice ψ s = _ from funext hg]; exact hc.integral_prod_left, ?_⟩

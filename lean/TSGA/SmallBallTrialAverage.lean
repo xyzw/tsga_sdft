@@ -132,7 +132,9 @@ theorem SmallBallMatrices.actual_replacement {Ω Z : Type*} [MeasurableSpace Ω]
       exact h.trans ((mul_le_mul_of_nonneg_right vm hr).trans_eq (mul_comm _ _))
     have pw : v^2/4*(∫ x, t.shape x*N.charge x) ≤ Pb := mul_le_mul_of_nonneg_left mass (by positivity)
     have isl : (if σ=1 then A.lower.cost else A.upper.cost) ≤ smallAdditionCost C ε V J k ‖q‖ r dist := by
-      split <;> first | exact low.trans I | exact high.trans I
+      split
+      · exact low.trans I
+      · exact high.trans I
     have scalar := small_replacement_error H A he hle.le hr s.cap fi σ sign isl (bgA.trans bg) W0 P0
       (g1.le.trans axis) (g2.le.trans axis) (p1.le.trans pw) (p2.le.trans pw)
     have bound : A.error σ ≤ cost := by

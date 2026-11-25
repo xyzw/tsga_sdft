@@ -41,7 +41,7 @@ theorem coulomb_local_spin_rotation (leibniz : LocalSectorLeibniz) (F : FiniteEn
   let C := LocalSpinCalculus.of_leibniz leibniz
   let w := O.indicator (localSpinSpeed H)
   have hm (j : Fin 3) : AEMeasurable (fun x => H x j) (volume.restrict O) :=
-    aemeasurable_pi_lambda _ fun i => aemeasurable_pi_lambda _ fun k =>
+    AEMeasurable.of_eval fun i => AEMeasurable.of_eval fun k =>
       (weak j i k).2.1.aestronglyMeasurable.aemeasurable
   have prod : Continuous (fun X : SpinMatrix => star X * X) := continuous_star.mul continuous_id
   have hw : AEMeasurable w volume := (aemeasurable_indicator_iff domain.measurableSet).2 <|

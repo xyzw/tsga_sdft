@@ -34,7 +34,7 @@ theorem localTensorValue_L2 {n : ℕ} (U : Position → unitary SpinMatrix) (hU 
     (f : Spins n → Space n → ℂ) (hf : ∀ a, MemLp (f a) 2 volume) (s : Spins n) :
     MemLp (localTensorValue U f s) 2 volume := by
   have hm : AEMeasurable (localTensorValue U f s) volume :=
-    Finset.aemeasurable_fun_sum _ fun a _ => (spin_tensor_meas _ (fun k i j => eval_meas (hU i j) k) s a).mul (hf a).1.aemeasurable
+    Finset.aemeasurable_fun_sum _ fun a _ => (spin_tensor_meas _ (fun k i j => eval_meas (hU i j) k) s a).mul (hf a).aemeasurable
   apply (memLp_two_iff_integrable_sq_norm hm.aestronglyMeasurable).mpr
   apply (integrable_finsetSum Finset.univ (fun a _ => (hf a).integrable_norm_pow (p := 2) (by decide))).mono'
     (hm.norm.pow_const 2).aestronglyMeasurable
@@ -63,7 +63,7 @@ private theorem Wave.tensor_potential {n : ℕ} (ψ : Wave n) (U : Position → 
       sectorIntegral (fun s x => a x*‖localTensorValue U ψ.value s x‖^2) = sectorIntegral (fun s x => a x*‖ψ.value s x‖^2) := by
   have ht s : Integrable (fun x => a x*‖localTensorValue U ψ.value s x‖^2) := by
     apply (integrable_finsetSum Finset.univ (fun s _ => hi s)).mono'
-      (ha.aestronglyMeasurable.mul ((localTensorValue_L2 U hU _ ψ.square_integrable s).1.norm.pow _))
+      (ha.aestronglyMeasurable.mul ((localTensorValue_L2 U hU _ ψ.square_integrable s).aestronglyMeasurable.norm.pow _))
     filter_upwards with x
     change ‖a x*‖localTensorValue U ψ.value s x‖^2‖ ≤ ∑ t, a x*‖ψ.value t x‖^2
     rw [Real.norm_of_nonneg (mul_nonneg (ha' _) (sq_nonneg _)), ← Finset.mul_sum, ← sectorLocalUnitary_norm U x (fun s => ψ.value s x)]
@@ -101,7 +101,7 @@ private theorem Wave.localSecond_meas {n : ℕ} (ψ : Wave n) {U} (hU : LocalUni
     AEMeasurable (fun x => ψ.localSecond U H s x i j) volume := by
   apply Finset.aemeasurable_fun_sum
   intro a _
-  apply AEMeasurable.mul _ (ψ.square_integrable a).1.aemeasurable
+  apply AEMeasurable.mul _ (ψ.square_integrable a).aemeasurable
   refine spin_tensor_meas _ ?_ s a
   intro k b c
   by_cases e : k = i

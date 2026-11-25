@@ -51,7 +51,7 @@ theorem mixed_cfc {A B : SpinMatrix} (hA : A.IsHermitian) (hB : B.IsHermitian)
   have hh : (star U : SpinMatrix) * (↑U * P * (star U : SpinMatrix) - ↑V * Q * (star V : SpinMatrix)) *
       (V : SpinMatrix) = P * ((star U : SpinMatrix) * V) - ((star U : SpinMatrix) * V) * Q := by
     rw [mul_sub, sub_mul]
-    congr 1
+    refine congrArg₂ (fun X Y : SpinMatrix => X - Y) ?_ ?_
     · calc
         _ = ((star U : SpinMatrix) * U) * P * ((star U : SpinMatrix) * V) := by simp only [mul_assoc]
         _ = _ := by rw [Unitary.coe_star_mul_self, one_mul]

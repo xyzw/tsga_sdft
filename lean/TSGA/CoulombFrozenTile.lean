@@ -227,8 +227,8 @@ def LargeCoulombTrials.toRough {H : FiniteEnergyInputs} {D : Density} {φ : Phas
     intro i
     simp only [Real.norm_eq_abs,abs_mul,abs_of_nonneg (tiles.weight_nonneg i)]
     exact mul_le_mul_of_nonneg_left (stateBound i) (tiles.weight_nonneg i)
-  · change |∫ x, localEnergy _ D φ x * P.cutoff (c-x)| ≤ G.coefficient*(∫ x, roughTileDensity D φ x*P.cutoff (c-x))
-    rw [← Real.norm_eq_abs, ← integral_const_mul]
+  · have average (f : Position → ℝ) : cutoffAverage P.cutoff f c = ∫ x, f x * P.cutoff (c-x) := rfl
+    rw [average, average, ← Real.norm_eq_abs, ← integral_const_mul]
     apply (norm_integral_le_integral_norm _).trans
     apply integral_mono_of_nonneg (ae_of_all _ fun _ => norm_nonneg _) (G.rough_integrable.const_mul _)
     filter_upwards [(quasiMeasurePreserving_sub_left_of_right_invariant volume c).ae P.cutoff_nonneg] with x hx

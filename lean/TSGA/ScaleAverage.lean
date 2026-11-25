@@ -10,7 +10,7 @@ namespace TSGA.SSW
 open Filter MeasureTheory Set
 open scoped Topology
 
-def scaleInterval : Set ℝ := Icc (1 / 2) (3 / 2)
+noncomputable def scaleInterval : Set ℝ := Icc (1 / 2) (3 / 2)
 
 noncomputable def scaleWeight (t : ℝ) : ℝ := (t ^ 4)⁻¹
 

@@ -67,10 +67,10 @@ theorem levyLieb_barycenter {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} 
       rw [hx,hy]
     · change levyLieb (spinL1Field (a • z.1 + b • w.1)) ≤ a*z.2 + b*w.2
       rw [levyLieb_congr_matrix he]
-      exact (levyLieb_convex ⟨Γ,hΓ⟩ ⟨Λ,hΛ⟩ ha hb hab).trans
+      exact (levyLieb_convex (M := spinL1Field z.1) (N := spinL1Field w.1) ⟨Γ,hΓ⟩ ⟨Λ,hΛ⟩ ha hb hab).trans
         (add_le_add (mul_le_mul_of_nonneg_left hz ha) (mul_le_mul_of_nonneg_left hw hb))
-  have hint := hconvex.integral_mem hclosed (h.mono fun ω hω => (extended_le_real_iff (v ω) (g ω)).2 hω)
-    (hv.prodMk hg)
+  have hint := hconvex.integral_mem (f := fun ω => (v ω, g ω)) hclosed
+    (h.mono fun ω hω => (extended_le_real_iff (v ω) (g ω)).2 hω) (hv.prodMk hg)
   rw [integral_pair hv hg] at hint
   obtain ⟨⟨Γ,hΓ⟩,hg'⟩ := (extended_le_real_iff _ _).1 hint
   exact ⟨Γ,hΓ,hg'⟩

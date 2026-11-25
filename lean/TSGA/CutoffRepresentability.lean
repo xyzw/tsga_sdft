@@ -75,7 +75,8 @@ theorem FiniteEnergyInputs.representable_cutoff (H : FiniteEnergyInputs) {f : Po
     (hw : ∀ i, WeakPartialOn Set.univ i (fun x => √(f x)) (fun x => g x i))
     (hg : MemLp g 2) {A : SpinMatrix} (ha : A.PosSemidef) :
     ∃ Γ : MixedState, feasible (fun x => f x • A) Γ := by
+  let D : Density := ⟨fun x => f x • A, fun x => ha.smul (hf x)⟩
   obtain ⟨S, hS, _⟩ := sqrtRegular_cutoff hf hi g hw hg ha
-  exact H.representable hS
+  exact H.representable (D := D) (S := S) hS
 
 end TSGA.ManyBody

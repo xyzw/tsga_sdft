@@ -66,12 +66,13 @@ private theorem grad_add_le (G T : MatrixGradient) (x : Position) :
 private theorem power_sum (D : Density) (a b : ℝ) (x : Position) :
     (D.positive x).isHermitian.cfc (fun s => s ^ a + s ^ b) = D.power a x + D.power b x := by
   let h := (D.positive x).isHermitian
-  have hdiag : (RCLike.ofReal ∘ (fun s => s^a + s^b) ∘ h.eigenvalues : Fin 2 → ℂ) =
-      (RCLike.ofReal ∘ (fun s => s^a) ∘ h.eigenvalues) +
-      (RCLike.ofReal ∘ (fun s => s^b) ∘ h.eigenvalues) := by ext i; simp
-  unfold Density.power Matrix.IsHermitian.cfc
-  rw [hdiag, ← map_add, Matrix.diagonal_add]
-  rfl
+  have hs : (spectrum ℝ (D.matrix x)).Finite := by
+    rw [h.spectrum_real_eq_range_eigenvalues]
+    exact Set.finite_range _
+  unfold Density.power
+  simp only [← h.cfc_eq]
+  exact cfc_add (a := D.matrix x) (fun s : ℝ => s ^ a) (fun s : ℝ => s ^ b)
+    (hs.continuousOn _) (hs.continuousOn _)
 
 /-- Hilbert–Schmidt spectral comparison and ordinary Sobolev composition give
 the weak power comparison used by the sharp alternative of Theorem 3.3. -/

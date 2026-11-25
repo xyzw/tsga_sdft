@@ -147,8 +147,8 @@ theorem FiniteEnergyInputs.boundary_windows_upper (H : FiniteEnergyInputs) (rule
   have ai : Integrable a := R.measurePreserving.integrable_comp_of_integrable wi
   have gi : Integrable G := gf.integrable_norm_pow (p := 2) (by norm_num)
   have bi : Integrable b := R.measurePreserving.integrable_comp_of_integrable
-    (gw.integrable_norm_pow (p := 2) (by norm_num))
-  have am : (∫ x, a x) = m := R.measurePreserving.integral_comp R.toHomeomorph.measurableEmbedding _
+    (g := fun y : Position => ‖h y‖^2) (gw.integrable_norm_pow (p := 2) (by norm_num))
+  have am : (∫ x, a x) = m := R.measurePreserving.integral_comp R.toHomeomorph.measurableEmbedding w
   have bm : (∫ x, b x) = ∫ x, ‖h x‖^2 := R.measurePreserving.integral_comp
     R.toHomeomorph.measurableEmbedding (fun x => ‖h x‖^2)
   have h₁ := translated_cost fi bi
@@ -518,7 +518,7 @@ theorem FiniteEnergyInputs.all_centers_upper (H : FiniteEnergyInputs) (rules : W
     windowFisherCost H M.trace.re*(c/(ℓ*δ)*(∫ x, f x)+(∫ x, ‖g x‖^2)) at bm
   rw [mass] at bm
   rw [← setIntegral_eq_integral_of_forall_compl_eq_zero vacuum,
-    setIntegral_union (disjoint_left.mpr fun _ h => h.2) isOpen_thickening.measurableSet hi.integrableOn hi.integrableOn]
+    setIntegral_union Set.disjoint_sdiff_left isOpen_thickening.measurableSet hi.integrableOn hi.integrableOn]
   have ie : (∫ z in Ω \ B, E z) = ∫ z in Ω \ B, energy (cutoffSpiral (ξ z) M q)/V :=
     setIntegral_congr_fun (hop.measurableSet.diff isOpen_thickening.measurableSet) full
   rw [ie]

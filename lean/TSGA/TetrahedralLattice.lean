@@ -271,7 +271,6 @@ theorem latticeCube_fundamental {ℓ : ℝ} (hℓ : 0 < ℓ) :
 theorem latticeCube_eq_cells_ae {ℓ : ℝ} (hℓ : 0 < ℓ) (m : Fin 3 → ℤ) :
     latticeCube ℓ m =ᵐ[volume] ⋃ o : CubeOrientation, latticeChart ℓ (m,o) ⁻¹' tetrahedron ℓ := by
   filter_upwards [latticeChart_ae_unique hℓ] with x hx
-  apply propext
   constructor
   · intro h
     obtain ⟨⟨n,o⟩,hn,_⟩ := hx

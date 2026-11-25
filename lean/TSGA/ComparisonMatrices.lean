@@ -244,8 +244,8 @@ theorem referenceFrame_conjugate (D : Density) (c x : Position) :
   calc
     _ = Unitary.conjStarAlgAut ℂ SpinMatrix (W * star U * U)
         (diagonal (fun i => ((D.positive x).1.eigenvalues i : ℂ))) := by
-      rw [map_mul (Unitary.conjStarAlgAut ℂ SpinMatrix) (W * star U) U]
-      rfl
+      unfold referenceFrame inSpinFrame
+      rw [Unitary.conjStarAlgAut_mul_apply (S := ℂ) (W * star U) U]
     _ = D.matrix x := by rw [h]; exact (D.positive x).1.spectral_theorem.symm
 
 theorem lower_pos (c : Position) : (E.lowerMatrix c).PosSemidef :=
@@ -312,13 +312,14 @@ theorem power_comparison (c : Position) (hc : c ∈ K) {u ω : ℝ} (hu : 0 < u)
     have heig (i : Fin 2) : |b i^u - vc i^u| ≤ ω :=
       (eigenvalue_power_distance (D.positive (k i)) (D.positive c) hu.le i).trans (osc _ (hk i) _ hc)
     have hnorm : hilbertSchmidt (hB.1.cfc (fun t => t^u) - D.power u c) ≤ 2*ω := by
-      rw [inSpinFrame_cfc]
-      change hilbertSchmidt (inSpinFrame U (fun i => (b i)^u) - inSpinFrame U (fun i => (vc i)^u)) ≤ _
-      rw [inSpinFrame_sub]
+      have hpower : D.power u c = inSpinFrame U ((fun t : ℝ => t^u) ∘ vc) := by
+        simp only [Density.power, Matrix.IsHermitian.cfc, inSpinFrame, U, vc,
+          Function.comp_def, RCLike.ofReal_eq_complex_ofReal]
+      rw [inSpinFrame_cfc, hpower, inSpinFrame_sub]
       have hn (X : SpinMatrix) : 0 ≤ hilbertSchmidt X := Real.sqrt_nonneg _
       apply (sq_le_sq₀ (hn _) (mul_nonneg (by norm_num) hω)).1
       rw [inSpinFrame_hs]
-      simp only [Pi.sub_apply]
+      simp only [Pi.sub_apply, Function.comp_apply]
       have hsq (i : Fin 2) := sq_le_sq' (abs_le.mp (heig i)).1 (abs_le.mp (heig i)).2
       nlinarith only [hsq 0, hsq 1, sq_nonneg ω]
     linarith only [triangle (hB.1.cfc (fun t => t^u)) (D.power u c) (D.power u x), hnorm, osc c hc x hx]

@@ -90,7 +90,8 @@ private theorem measurable_L1_family {P : Type*} [MeasurableSpace P]
     rw [dist_edist]
     congr 1
     conv_lhs => rhs; rw [← Lp.toLp_coeFn g (Lp.memLp g)]
-    exact (Lp.edist_toLp_toLp _ _ _ _).trans eLpNorm_one_eq_lintegral_enorm
+    exact (Lp.edist_toLp_toLp _ _ _ _).trans
+      (eLpNorm_one_eq_lintegral_eNorm ((h s).sub (Lp.memLp g)).aestronglyMeasurable)
   apply measurable_of_isOpen
   intro U hU
   choose r hr hsub using fun x : U => Metric.isOpen_iff.mp hU x x.property
@@ -140,10 +141,14 @@ private theorem measurable_tileCutoff {P : Type*} [MeasurableSpace P]
     region.indicator (fun _ => (1:ℝ)) z *
       ((b z.1.1 ^ 3)⁻¹ * η' ((b z.1.1)⁻¹ • (z.1.2-z.2)))
   have hg : Measurable g := by
-    apply (measurable_const.indicator hreg).mul
-    apply ((hb.comp (measurable_fst.comp measurable_fst)).pow_const 3).inv.mul
-    apply hη.comp
-    fun_prop (disch := assumption)
+    have hscale : Measurable (fun z : (P × Position) × Position => b z.1.1) :=
+      hb.comp (measurable_fst.comp measurable_fst)
+    have harg : Measurable (fun z : (P × Position) × Position => (b z.1.1)⁻¹ • (z.1.2 - z.2)) :=
+      hscale.inv.smul ((measurable_snd.comp measurable_fst).sub measurable_snd)
+    have hind : Measurable (region.indicator (fun _ => (1 : ℝ))) := measurable_const.indicator hreg
+    convert hind.mul ((hscale.pow_const (3 : ℕ)).inv.mul (hη.comp harg)) using 1
+    funext z
+    simp only [g, Pi.mul_apply, Pi.inv_apply, Function.comp_apply]
   convert hg.stronglyMeasurable.integral_prod_right' (ν := volume) |>.measurable using 1
   funext z
   apply integral_congr_ae
@@ -174,7 +179,7 @@ theorem measurable_coulomb_energy_family {P : Type*} [MeasurableSpace P]
     Measurable (fun s => energy (u s)) := by
   obtain ⟨F,hF,hval⟩ := borel
   have hll : Measurable (fun s => levyLieb (u s)) := by
-    have aux := hF.comp (measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+    have aux := hF.comp (Measurable.of_eval fun i => Measurable.of_eval fun j =>
       measurable_L1_family (f := fun s x => u s x i j) (hm i j) (fun s => h1 s i j))
     simpa only [Function.comp_def, hval] using aux
   let r := fun z : P × Position => (u z.1 z.2).trace.re

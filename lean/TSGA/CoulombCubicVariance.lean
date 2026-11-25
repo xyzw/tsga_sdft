@@ -82,7 +82,7 @@ theorem coulomb_variable_cubic_variance (O : TileOrientationLaw) {η : Mollifier
   have rewrite_var : scaleAverageAt α (latticeVariance O η charge ℓ δ) =
       scaleAverageAt α (periodicCoulombVariance O f charge ℓ) := by
     unfold scaleAverageAt
-    congr 1
+    apply congrArg (fun a : ℝ => a / (∫ t in Icc (1 - α) (1 + α), scaleWeight t))
     apply setIntegral_congr_fun measurableSet_Icc
     intro t ht
     have ht' : 0 < t := by linarith [ht.1]

@@ -137,7 +137,7 @@ private theorem prod_range (f : IslandProfile Z) (ω : Ω) (x : Position)
     P.uncovered f ω x ∈ Set.Icc 0 1 := by
   rw [H.window_prod f ω x h]
   exact ⟨Finset.prod_nonneg (fun i _ => sub_nonneg.mpr (hf _).2),
-    Finset.prod_le_one (fun i _ => sub_nonneg.mpr (hf _).2) (fun i _ => by linarith [(hf (P.mark ω i)).1])⟩
+    Finset.prod_le_one₀ (fun i _ => sub_nonneg.mpr (hf _).2) (fun i _ => by linarith [(hf (P.mark ω i)).1])⟩
 
 private theorem product_separate (f g : IslandProfile Z) (ω : Ω) (x : Position)
     (hf : ∀ z, f x z ≠ 0 → H.outer x z ≠ 0) (hg : ∀ z, g x z ≠ 0 → H.outer x z ≠ 0)

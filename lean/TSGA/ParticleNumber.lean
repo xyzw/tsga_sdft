@@ -24,7 +24,6 @@ private theorem split_preserves (n : ℕ) : MeasurePreserving (splitSpace n) :=
 private theorem split_inv (n : ℕ) (z : Position × Space n) :
     (splitSpace n).symm z = Fin.cons z.1 z.2 := by
   simp [splitSpace, MeasurableEquiv.piFinSuccAbove_symm_apply]
-  rfl
 
 private def marginal {n : ℕ} (ψ : Wave (n+1)) (s : Spins (n+1)) (x : Position) : ℝ :=
   ∫ y : Space n, ‖ψ.value s (Fin.cons x y)‖ ^ 2

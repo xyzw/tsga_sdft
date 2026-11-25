@@ -80,7 +80,7 @@ theorem local_ssw_measurable_of_continuous {E : EnergyFunctional} {η : Mollifie
     {D : Density} {φ : Phase} {p θ : ℝ} {S T : MatrixGradient} (hD : DensityRegular D p θ S T)
     (hφ : φ.Regular p) : AEStronglyMeasurable (localEnergy (referenceEnergies E η) D φ) volume := by
   have hm : AEMeasurable (fun x => (⟨D.matrix x, D.positive x⟩ : {M : SpinMatrix // M.PosSemidef})) volume :=
-    hD.aemeasurable_matrix.subtype_mk
+    hD.aemeasurable_matrix.subtype_mk (s := {M : SpinMatrix | M.PosSemidef}) (hfs := D.positive)
   exact (hc.measurable.comp_aemeasurable (hm.prodMk hφ.continuous_grad.aemeasurable)).aestronglyMeasurable
 
 end TSGA.SSW

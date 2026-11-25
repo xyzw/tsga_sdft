@@ -35,6 +35,10 @@ theorem SpiralState.diagonalize {D : DomainSequence} {M : SpinMatrix} {n : ℕ} 
   refine ⟨⟨Λ, h⟩, ?_⟩
   simp only [value, hk, hw, ← diagonal_spiral D M n q, trace_diagonalSpin]
 
+section
+
+attribute [local irreducible] DomainSequence.spiralField feasible
+
 /-- The remaining finite kinematics act on mixed states of the indicated
 density. Energies below are the kinetic plus Coulomb expectations less the
 direct term. The total charge and axial magnetization include the volume. -/
@@ -57,6 +61,8 @@ structure SpiralTransport (D : DomainSequence) (M : SpinMatrix) (n : ℕ) (ζ θ
 structure SpiralKinematics (D : DomainSequence) (M : SpinMatrix) (n : ℕ) (ζ θ : ℝ)
     extends SpiralTransport D M n ζ θ where
   represented : Nonempty (SpiralState D M n 0)
+
+end
 
 def SpiralKinematics.finiteSpinLaws {D : DomainSequence} {M : SpinMatrix} {n : ℕ} {ζ θ : ℝ}
     (H : SpiralKinematics D M n ζ θ) :

@@ -29,6 +29,6 @@ theorem DensityRegular.aemeasurable_matrix {D : Density} {p θ : ℝ} {S T : Mat
       congrArg (fun M : SpinMatrix => M i j) (D.sqrt_mul_self x).symm
     simp_rw [he]
     exact Finset.aemeasurable_fun_sum _ fun k _ => (hs i k).mul (hs k j)
-  exact aemeasurable_pi_lambda _ fun i => aemeasurable_pi_lambda _ (hm i)
+  exact AEMeasurable.of_eval fun i => AEMeasurable.of_eval (hm i)
 
 end TSGA

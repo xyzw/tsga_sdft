@@ -54,7 +54,6 @@ theorem splitPair_apply {n : ℕ} (p : PairSpace × Space n) :
   let u := fun k => MeasurableEquiv.piFinSuccAbove (fun _ : Fin (k+1) => Position) 0
   have hu (k : ℕ) (z : Position × Space k) : (u k).symm z = Fin.cons z.1 z.2 := by
     simp [u,MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   change (u _).symm (p.1.1,(u _).symm (p.1.2,p.2)) = _
   simp only [hu]
 
@@ -158,9 +157,8 @@ theorem PureState.pairDensitySpin_entry_integrable (s : PureState) (i j : (Fin 2
       apply integrable_finsetSum
       intro t _
       apply Integrable.const_mul
-      have hj := pairAmplitude_L2 ψ t j
       have hc : MemLp (fun p : PairSpace × Space n => conj (pairAmplitude ψ t j p.1 p.2)) 2 (pairVolume.prod volume) :=
-        hj.of_le (Complex.continuous_conj.comp_aestronglyMeasurable hj.1) (ae_of_all _ fun _ => (Complex.norm_conj _).le)
+        (pairAmplitude_L2 ψ t j).star
       exact ((pairAmplitude_L2 ψ t i).integrable_mul hc).integral_prod_left
 
 /-- The spin pair density in the spectral ensemble representation. -/
@@ -191,7 +189,7 @@ private theorem ae_summable_componentPairMass (Γ : MixedState) :
   have hi (k) : Integrable (F k) pairVolume := ((Γ.component k).integral_pairDensity.1).const_mul _
   have hp (k) : 0 ≤ᵐ[pairVolume] F k := ae_of_all _ (componentPairMass_nonneg Γ k)
   have hm (k) : eLpNorm (F k) 1 pairVolume = ENNReal.ofReal (Γ.weight k*(Γ.component k).interaction) := by
-    rw [eLpNorm_one_eq_lintegral_enorm]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hi k).aestronglyMeasurable]
     calc
       _ = ∫⁻ z, ENNReal.ofReal (F k z) ∂pairVolume := by
         apply lintegral_congr
@@ -200,7 +198,7 @@ private theorem ae_summable_componentPairMass (Γ : MixedState) :
       _ = ENNReal.ofReal (∫ z, F k z ∂pairVolume) := (ofReal_integral_eq_lintegral_ofReal (hi k) (hp k)).symm
       _ = _ := by simp [F,componentPairMass,integral_const_mul,(Γ.component k).integral_pairDensity.2]
   have hn : ∀ᵐ z ∂pairVolume, Summable (fun k => ‖F k z‖) := by
-    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl (fun k => (hi k).1)
+    apply summable_norm_of_tsum_eLpNorm_ne_top (p := 1) le_rfl
     simpa only [hm] using Γ.interaction_summable.tsum_ofReal_ne_top
   exact hn.mono fun _ h => h.of_norm
 

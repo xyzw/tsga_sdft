@@ -91,20 +91,25 @@ theorem fluctuation_bound {B D : Density} {massFull massShell hitShell diam : �
   change (∫ ω, A ω ∂μ) ≤ _ at a
   change (∫ ω, C ω ∂μ) ≤ _ at b
   change (∫ ω, S ω ∂μ) ≤ _ at c
-  have ia := integrable_hartree_of_joint J₁
-  have ib := integrable_hartree_of_joint J₂
-  have ic := integrable_hartree_of_joint J₃
+  have ia : Integrable A μ := integrable_hartree_of_joint J₁
+  have ib : Integrable S μ := integrable_hartree_of_joint J₂
+  have ic : Integrable C μ := integrable_hartree_of_joint J₃
   obtain ⟨out,ins,det,_,_,_⟩ := m.controls M dom
   have ctr := (out.add ins).sub det
   have cent : JointDirectIntegrable μ (m.centered B D) :=
     ctr.joint ctr (fun x => add_nonneg (B.charge_nonneg x) (D.charge_nonneg x)) dom.direct
   have hsplit : (∫ ω, hartree (m.centered B D ω) ∂μ) ≤ 3*((∫ ω, A ω ∂μ)+(∫ ω, S ω ∂μ)+(∫ ω, C ω ∂μ)) := by
-    erw [← integral_add ia ib,← integral_add (ia.add ib) ic,← integral_const_mul]
-    apply integral_mono_ae (integrable_hartree_of_joint cent) (((ia.add ib).add ic).const_mul 3)
-    filter_upwards [tri] with ω hw
-    have eqn : m.centered B D ω = m.firstFluct B ω + m.shellFluct B ω + m.coreFluct D ω := funext (m.fluctuation_split B D ω)
-    rw [eqn]
-    exact hartree_three_le hw positive
+    calc
+      _ ≤ ∫ ω, 3 * (A ω + S ω + C ω) ∂μ := by
+        apply integral_mono_ae (integrable_hartree_of_joint cent) (((ia.add ib).add ic).const_mul 3)
+        filter_upwards [tri] with ω hw
+        have eqn : m.centered B D ω = m.firstFluct B ω + m.shellFluct B ω + m.coreFluct D ω :=
+          funext (m.fluctuation_split B D ω)
+        rw [eqn]
+        exact hartree_three_le hw positive
+      _ = _ := by
+        have iab : Integrable (fun ω => A ω + S ω) μ := ia.add ib
+        rw [integral_const_mul, integral_add iab ic, integral_add ia ib]
   apply hsplit.trans
   dsimp only [m] at *
   linarith only [a,b,c]

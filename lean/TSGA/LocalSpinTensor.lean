@@ -136,7 +136,6 @@ private theorem slice_cross_integrable {n : ℕ} (ψ : Wave (n+1)) :
   have he : (fun p : Position × Space n => Fin.cons p.1 p.2) = e.symm := by
     funext p
     simp [e,MeasurableEquiv.piFinSuccAbove_symm_apply]
-    rfl
   have hp : MeasurePreserving (fun p : Position × Space n => Fin.cons p.1 p.2)
       (volume.prod volume) (volume : Measure (Space (n+1))) := he ▸ (volume_preserving_piFinSuccAbove (fun _ => Position) 0).symm
   apply ae_all_iff.mpr
@@ -147,8 +146,7 @@ private theorem slice_cross_integrable {n : ℕ} (ψ : Wave (n+1)) :
   intro s
   have f := (ψ.square_integrable (Fin.cons i s)).comp_measurePreserving hp
   have g := (ψ.square_integrable (Fin.cons j s)).comp_measurePreserving hp
-  exact (f.integrable_mul (q := 2) (g.of_le (Complex.continuous_conj.comp_aestronglyMeasurable g.1)
-    (ae_of_all _ fun z => (Complex.norm_conj _).le))).prod_right_ae
+  exact (f.integrable_mul (q := 2) g.star).prod_right_ae
 
 private theorem slice_density {n : ℕ} (ψ : Wave (n+1)) {x : Position}
     (hx : ∀ i j s, Integrable (fun y : Space n => spinSlice ψ x y i s * conj (spinSlice ψ x y j s)))

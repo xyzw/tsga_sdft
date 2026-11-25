@@ -38,6 +38,7 @@ private theorem TileAxisChoice.comparison (axes : TileAxisChoice t M aligned W) 
       weak charge shape root kin rep
     exact ⟨G,hf,hb.trans hf⟩
 
+attribute [local irreducible] SpiralTaper.field SpiralTaper.residual constantSpinDensity in
 /-- The ordered matrix data and analytic domains needed for the Poisson
 island trials. Both their energies and the local rotation errors are derived. -/
 structure TileIslandPairs {K : Set Position} (t : SpiralTaper K) (aligned : Density)

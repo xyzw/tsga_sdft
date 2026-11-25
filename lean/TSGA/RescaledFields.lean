@@ -119,7 +119,7 @@ theorem MinorityBound.dilate {ν : ℝ} {D : Density} (h : MinorityBound ν D)
     change Measure.map (fun x : Position => L⁻¹ • x) volume ≪ volume
     rw [map_addHaar_smul _ (inv_ne_zero hL.ne')]
     exact Measure.smul_absolutelyContinuous
-  exact (Measure.QuasiMeasurePreserving.mk e.measurable hmap).tendsto_ae h
+  exact (MeasureTheory.QuasiMeasurePreserving.mk e.measurable.aemeasurable hmap).tendsto_ae h
 
 theorem integral_dilatedGradient (G : MatrixGradient) (r : ℝ) {L : ℝ} (hL : 0 < L) :
     (∫ x, matrixGradNorm (dilatedGradient G L) x ^ r) =

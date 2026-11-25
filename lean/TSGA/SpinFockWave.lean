@@ -198,10 +198,10 @@ theorem Wave.split_normalized {n : ℕ} (ψ : Wave n) (U : SpinSplitter) (hU : U
     (∑ t, ∫ x, ‖ψ.splitValue U t x‖^2) = 1 := by
   calc
     _ = ∫ x, ∑ t, ‖ψ.splitValue U t x‖^2 :=
-      (integral_finsetSum _ fun t _ => (memLp_two_iff_integrable_sq_norm (ψ.splitValue_L2 U t).1).1 (ψ.splitValue_L2 U t)).symm
+      (integral_finsetSum _ fun t _ => (ψ.splitValue_L2 U t).integrable_norm_pow (p := 2) (by decide)).symm
     _ = _ := by
       simp_rw [ψ.split_norm U hU]
-      rw [integral_finsetSum _ fun s _ => (memLp_two_iff_integrable_sq_norm (ψ.square_integrable s).1).1 (ψ.square_integrable s)]
+      rw [integral_finsetSum _ fun s _ => (ψ.square_integrable s).integrable_norm_pow (p := 2) (by decide)]
       exact ψ.normalized
 
 /-- On the doubled wave the isometry preserves the full kinetic integrand
@@ -233,7 +233,7 @@ theorem Wave.split_coulomb_integrable {n : ℕ} (ψ : Wave n) (U : SpinSplitter)
   have htot : Integrable (fun x => ∑ s, coulomb x * ‖ψ.value s x‖^2) :=
     integrable_finsetSum _ (fun s _ => ψ.interaction_integrable s)
   have hm : Measurable (coulomb : Space n → ℝ) := by unfold coulomb; fun_prop
-  apply htot.mono' (hm.aestronglyMeasurable.mul ((ψ.splitValue_L2 U t).1.norm.pow _))
+  apply htot.mono' (hm.aestronglyMeasurable.mul ((ψ.splitValue_L2 U t).aestronglyMeasurable.norm.pow _))
   filter_upwards with x
   change ‖coulomb x * ‖ψ.splitValue U t x‖^2‖ ≤ _
   rw [Real.norm_of_nonneg (mul_nonneg (coulomb_nonneg x) (sq_nonneg _)),← Finset.mul_sum,← ψ.split_norm U hU]

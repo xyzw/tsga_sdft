@@ -58,7 +58,9 @@ theorem actualSmallTaper_bounds (O : TileOrientationLaw) (frames : TileFrameMeas
   let g := fun x => U.symm (h (U (x-c)))
   have hg : (fun x => ‖g x‖^2) = fun x => ‖h (U (x-c))‖^2 := by simp [g]
   have hi : Integrable fun x => ‖g x‖^2 := by
-    rw [hg]; exact rigid.integrable_comp_of_integrable (hLp.integrable_norm_pow (p := 2) (by decide))
+    rw [hg]
+    exact rigid.integrable_comp_of_integrable (g := fun x => ‖h x‖^2)
+      (hLp.integrable_norm_pow (p := 2) (by decide))
   refine ⟨hroot,hc,fi,vbound,g,?_,hi.indicator measurableSet_closedBall,?_⟩
   · rw [shape]; exact W.rigid weak U c
   · apply (setIntegral_le_integral hi (ae_of_all _ fun _ => sq_nonneg _)).trans

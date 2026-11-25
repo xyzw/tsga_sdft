@@ -70,13 +70,14 @@ theorem spinWavePhase_perm {n : ℕ} (v : Fin 2 → Position) (s : Spins n) (x :
 
 private theorem memLp_phase_mul {n : ℕ} (v : Fin 2 → Position) (s : Spins n)
     {f : Space n → ℂ} (hf : MemLp f 2) : MemLp (fun x => spinWavePhase v s x * f x) 2 :=
-  hf.mono ((spinWavePhase_smooth v s).continuous.aestronglyMeasurable.mul hf.1)
+  hf.mono ((spinWavePhase_smooth v s).continuous.aestronglyMeasurable.mul hf.aestronglyMeasurable)
     (ae_of_all _ fun x => by simp)
 
 private theorem test_integrable {n : ℕ} {f : Space n → ℂ} (hf : MemLp f 2)
     {g : Space n → ℂ} (hg : Continuous g) (hc : HasCompactSupport g) :
-    Integrable (fun x => g x * f x) :=
-  (hf.locallyIntegrable (by norm_num)).integrable_smul_left_of_hasCompactSupport hg hc
+    Integrable (fun x => g x * f x) := by
+  simpa only [smul_eq_mul] using
+    (hf.locallyIntegrable one_le_two).integrable_smul_left_of_hasCompactSupport hg hc
 
 private theorem weak_complex_test {n : ℕ} (ψ : Wave n) (s : Spins n) (i : Fin n) (j : Fin 3)
     (g : Space n → ℂ) (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g) :

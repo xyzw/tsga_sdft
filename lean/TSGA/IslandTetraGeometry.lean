@@ -56,6 +56,7 @@ theorem tetraIslandOverlapGeometry (η : Mollifier) (hs : Function.support η.ke
     IslandOverlapGeometry (tetraIslandProfiles η hs hv hd hw T window finite_hits)
       ((L*r)^3) (L^3*r^2*δ) (L*v*δ/r) (L*r) := by
   let H := tetraIslandProfiles η hs hv hd hw T window finite_hits
+  change IslandOverlapGeometry H ((L*r)^3) (L^3*r^2*δ) (L*v*δ/r) (L*r)
   have hr : 0 < r := by linarith
   have hp : 0 < r-δ := by linarith
   have hone : 1 ≤ L := by linarith
@@ -75,12 +76,17 @@ theorem tetraIslandOverlapGeometry (η : Mollifier) (hs : Function.support η.ke
   have out (z : Z) : Integrable (fun x => H.outer x z) ∧ (∫ x, H.outer x z) = r^3/24 := tile r hr z
   have layer (z : Z) : Integrable (fun x => H.layer x z) ∧ (∫ x, H.layer x z) = (r-δ)^3/24 := tile _ hp z
   have coreMeas : Measurable (islandCore r) := (islandCoreBump.continuous.comp (continuous_const_smul _)).pow 2 |>.measurable
+  have core_eq (z : Z) (x : Position) : H.inner x z = islandCore r (T.chart z x) := rfl
+  have innerMeas : Measurable (fun q : Z × Position => H.inner q.2 q.1) := by
+    simp only [core_eq]
+    exact coreMeas.comp T.measurable
   have layerMeas : Measurable (fun q : Z × Position => H.layer q.2 q.1) :=
     (measurable_smoothedTetrahedron η (r-δ) hd).comp T.measurable
   have outerMeas : Measurable (fun q : Z × Position => H.outer q.2 q.1) :=
     (measurable_smoothedTetrahedron η r hd).comp T.measurable
-  have core (z : Z) : Integrable (fun x => H.inner x z) :=
-    (T.spatial z).integrable_comp_of_integrable (islandCore_mass hr).1
+  have core (z : Z) : Integrable (fun x => H.inner x z) := by
+    simp only [core_eq]
+    exact (T.spatial z).integrable_comp_of_integrable (g := islandCore r) (islandCore_mass hr).1
   have Lmass (z : Z) : (∫ x, H.layer x z) ≤ (L*r)^3 :=
     ((integral_mono (layer z).1 (out z).1 fun x => H.layer_le_outer x z).trans_eq (out z).2).trans hvol
   have hα : 0 ≤ δ/r := div_nonneg hd.le hr.le
@@ -90,7 +96,7 @@ theorem tetraIslandOverlapGeometry (η : Mollifier) (hs : Function.support η.ke
   constructor
   · exact ⟨layerMeas,fun z x => H.layer_range x z,fun z => ⟨(layer z).1,Lmass z⟩,fun x =>
       ⟨(H.layer_mass x).1,(integral_mono (H.layer_mass x).1 (H.outer_mass x).1 (H.layer_le_outer x)).trans_eq (H.outer_mass x).2⟩⟩
-  · refine ⟨coreMeas.comp T.measurable,fun z x => H.inner_range x z,fun z => ⟨core z,?_⟩,fun x => ⟨(H.inner_mass x).1,?_⟩⟩
+  · refine ⟨innerMeas,fun z x => H.inner_range x z,fun z => ⟨core z,?_⟩,fun x => ⟨(H.inner_mass x).1,?_⟩⟩
     · exact (integral_mono (core z) (layer z).1 (fun x => H.core_le_layer x z)).trans (Lmass z)
     · exact (integral_mono (H.inner_mass x).1 (H.outer_mass x).1
         (fun z => (H.core_le_layer x z).trans (H.layer_le_outer x z))).trans_eq (H.outer_mass x).2
@@ -113,7 +119,7 @@ theorem tetraIslandOverlapGeometry (η : Mollifier) (hs : Function.support η.ke
         _ ≤ L*(v*(δ/r)) := b
         _ = L*v*δ/r := by ring
   · have supp (x : Position) (z : Z) (hx : H.outer x z ≠ 0) : ‖T.chart z x‖ < 3*r := by
-      obtain ⟨y,hy,hxy⟩ := smoothed_support_witness hs hd hx
+      obtain ⟨y,hy,hxy⟩ := smoothed_support_witness (Ω := tetrahedron r) (x := T.chart z x) hs hd hx
       have b := mem_closedBall.mp (tetrahedron_subset hr hy)
       have tri := dist_triangle (T.chart z x) y 0
       rw [dist_zero_right,dist_zero_right] at tri

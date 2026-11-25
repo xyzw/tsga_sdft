@@ -79,7 +79,10 @@ private theorem power_bound {a : ℝ} (ha : 0 < a) {x : Position} (hx : x ∈ cl
       linarith only [cap, hn 0]
   let b := fun i => v i ^ a
   have hn (i : Fin 2) : 0 ≤ b i := Real.rpow_nonneg ((N.positive x).eigenvalues_nonneg _) _
-  change hilbertSchmidt (inSpinFrame h.eigenvectorUnitary b) ≤ _
+  have hpower : N.power a x = inSpinFrame h.eigenvectorUnitary b := by
+    simp only [Density.power, Matrix.IsHermitian.cfc, inSpinFrame, h, b, v,
+      Function.comp_def, RCLike.ofReal_eq_complex_ofReal]
+  rw [hpower]
   have t := SSW.hilbertSchmidt_le_trace (inSpinFrame_pos h.eigenvectorUnitary hn)
   rw [inSpinFrame_trace] at t
   have pair (i : Fin 2) : b i ≤ s.r^a := Real.rpow_le_rpow ((N.positive x).eigenvalues_nonneg _) (eig i) ha.le

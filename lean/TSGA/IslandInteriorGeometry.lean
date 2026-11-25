@@ -25,7 +25,7 @@ theorem unionCoeff_range (s : Finset ℕ) (f : ℕ → ℝ) (hf : ∀ k, f k ∈
     {n : ℕ} (hn : n ∈ s) : unionCoeff s f n ∈ Set.Icc 0 1 := by
   let p := ∏ k ∈ s.erase n, (1-f k)
   have p₀ : 0 ≤ p := Finset.prod_nonneg fun k _ => sub_nonneg.mpr (hf k).2
-  have p₁ : p ≤ 1 := Finset.prod_le_one (fun k _ => sub_nonneg.mpr (hf k).2) (fun k _ => by linarith [(hf k).1])
+  have p₁ : p ≤ 1 := Finset.prod_le_one₀ (fun k _ => sub_nonneg.mpr (hf k).2) (fun k _ => by linarith [(hf k).1])
   have lower : f n ≤ 1-(∏ k ∈ s, (1-f k)) := by
     rw [← Finset.prod_erase_mul s _ hn]
     change f n ≤ 1-p*(1-f n)

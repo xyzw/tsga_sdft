@@ -58,7 +58,9 @@ theorem SmallBallMatrices.free_window_raw {Ω Z : Type*} [MeasurableSpace Ω] [M
     positivity
   have axis : m.axisCost t S p ≤ W := m.axisCost_le t S p
   have island : (if σ=1 then A.lower.cost else A.upper.cost) ≤ frozenAdditionCost t S tr.grad ε C dist r := by
-    split <;> assumption
+    split
+    · exact low
+    · exact high
   have phase₁ : A.phaseGauge.forwardCost ≤ 0 := by simp [p1]
   have phase₂ : A.phaseGauge.inverseCost ≤ 0 := by simp [p2]
   have bound := small_replacement_error L A he hle hr s.cap tr.mass σ sign island bg ww le_rfl

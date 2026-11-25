@@ -52,8 +52,11 @@ theorem actual_frozen_average (H : FiniteEnergyInputs) (sob : SobolevDifferenceQ
   have hm : 0 ≤ m := by cases side <;> dsimp [m,CutoffSide.mass] <;> positivity
   have hL : 0 < L := tileSideLength_pos side he hle
   have hρ : 0 ≤ B.trace.re := (RCLike.nonneg_iff.mp hB.trace_nonneg).1
-  have sh : Measurable (fun a : (ℝ × O.Frames) × Position => actualTileShape O η side ε⁻¹ a.1 (c-a.2)) :=
-    (measurable_actualTileShape O frames η side _).comp (measurable_fst.prodMk (measurable_const.sub measurable_snd))
+  have coordinates : Measurable (fun a : (ℝ × O.Frames) × Position => (a.1,c-a.2)) :=
+    measurable_fst.prodMk (measurable_const.sub measurable_snd)
+  have sh : Measurable (fun a : (ℝ × O.Frames) × Position => actualTileShape O η side ε⁻¹ a.1 (c-a.2)) := by
+    simpa only [Function.comp_def, Function.uncurry] using
+      (measurable_actualTileShape O frames η side ε⁻¹).comp coordinates
   have entries (j k : Fin 2) : Measurable (fun a : (ℝ × O.Frames) × Position =>
       cutoffSpiral (fun x => actualTileShape O η side ε⁻¹ a.1 (c-x)) B q a.2 j k) := by
     dsimp only [cutoffSpiral,Matrix.smul_apply,smul_eq_mul]
@@ -70,9 +73,13 @@ theorem actual_frozen_average (H : FiniteEnergyInputs) (sob : SobolevDifferenceQ
       have ht := tileDilation_pos i.1
       have original : Integrable (actualTileShape O η side ε⁻¹ i) := Integrable.of_integral_ne_zero
         (ms.trans_ne (by positivity : side.mass ε*(tileDilation i.1*ε⁻¹)^3/24 ≠ 0))
-      exact (volume.measurePreserving_sub_left c).integrable_comp_of_integrable original
+      exact original.comp_sub_left c
     apply memLp_one_iff_integrable.mpr
-    apply (integ.mul_const ‖B j k‖).mono' ((entries j k).comp (measurable_const.prodMk measurable_id)).aestronglyMeasurable
+    have entry : Measurable (fun x => cutoffSpiral
+        (fun y => actualTileShape O η side ε⁻¹ i (c-y)) B q x j k) := by
+      simpa only [Function.comp_def, id_eq] using
+        (entries j k).comp ((measurable_const (a := i)).prodMk measurable_id)
+    apply (integ.mul_const ‖B j k‖).mono' entry.aestronglyMeasurable
     exact ae_of_all _ fun x => by
       simp [cutoffSpiral,rotate_by_entry,phaseFactor,Complex.norm_exp,
         abs_of_nonneg (smoothedIndicator_bounds _ η (tileDilation_pos i.1) _).1, actualTileShape]

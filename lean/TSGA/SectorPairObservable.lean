@@ -54,7 +54,7 @@ private theorem pairProbe_wave {n : ℕ} (ψ : Wave (n+2)) (b : PairSpace → �
   have hg (t) : Integrable (g t) := by
     have h := ψ.square_integrable (Fin.cons j.1 (Fin.cons j.2 t))
     have hc : MemLp (fun x => conj (ψ.value (Fin.cons j.1 (Fin.cons j.2 t)) x)) 2 volume :=
-      h.of_le (Complex.continuous_conj.comp_aestronglyMeasurable h.1) (ae_of_all _ fun x => (Complex.norm_conj _).le)
+      h.star
     exact (ψ.square_integrable (Fin.cons i.1 (Fin.cons i.2 t))).integrable_mul hc
   let G (t : Spins n) (z : PairSpace) := b z * ∫ y : Space n, g t (Fin.cons z.1 (Fin.cons z.2 y))
   have hG (t) : Integrable (G t) pairVolume := by
@@ -96,7 +96,7 @@ theorem pure_pair_duality (s : PureState) (b : PairSpace → ℂ) (hb : Measurab
       have H (i j : Fin 2 × Fin 2) (t : Spins n) : Integrable (fun x => A i j * G i j t x) := by
         have h := ψ.square_integrable (Fin.cons i.1 (Fin.cons i.2 t))
         have hc : MemLp (fun x => conj (z x (i,t))) 2 volume :=
-          h.of_le (Complex.continuous_conj.comp_aestronglyMeasurable h.1) (ae_of_all _ fun _ => (Complex.norm_conj _).le)
+          h.star
         have hj := ψ.square_integrable (Fin.cons j.1 (Fin.cons j.2 t))
         exact ((hj.integrable_mul hc).bdd_mul
           (hb.comp ((measurable_pi_apply 0).prodMk (measurable_pi_apply 1))).aestronglyMeasurable

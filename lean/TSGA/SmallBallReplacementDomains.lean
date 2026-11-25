@@ -10,8 +10,8 @@ open scoped ComplexOrder MatrixOrder InnerProductSpace
 
 theorem referenceDensity_charge (N : Density) (c x : Position) :
     (referenceDensity N c).charge x = N.charge x := by
-  change (inSpinFrame (N.positive c).1.eigenvectorUnitary (N.positive x).1.eigenvalues).trace.re = (N.matrix x).trace.re
-  rw [inSpinFrame_trace, (N.positive x).1.trace_eq_sum_eigenvalues]
+  simp only [Density.charge, referenceDensity, SpectralExtrema.referenceFrame, inSpinFrame_trace]
+  rw [(N.positive x).1.trace_eq_sum_eigenvalues]
   simp [Fin.sum_univ_two]
 
 private theorem referenceDensity_power (N : Density) (c x : Position) (a : ℝ) :

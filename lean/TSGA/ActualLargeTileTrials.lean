@@ -149,9 +149,9 @@ theorem FiniteEnergyInputs.actual_large_trials (H : FiniteEnergyInputs) (product
   have ci : Integrable (fun i => w i*cost i) μ := by
     simp_rw [eq]
     exact ((ar.const_mul _).add (as'.const_mul _)).add (aa.const_mul _)
-  have em := measurable_variableWindowEnergy borel rot.entries f
-    (km.comp (measurable_fst.prodMk (measurable_const.sub measurable_snd)))
-    (B := 1) (fun i x => (abs_of_nonneg (kb i (c-x)).1).le.trans (kb i (c-x)).2)
+  have em := (actualWindowEnergy_measurable O frames η side ε⁻¹ borel
+    (D := rotatedDensity D φ) rot.entries).comp
+    (measurable_id.prodMk (measurable_const (a := c)))
   have en : Measurable (fun i => w i*energy (N i).matrix) := by
     have id (i) := funext (localM i)
     simp_rw [id]

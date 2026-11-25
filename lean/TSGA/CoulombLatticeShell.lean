@@ -82,7 +82,6 @@ theorem latticeShell_cube_ae {ℓ δ : ℝ} (hℓ : 0 < ℓ) (hδ : 0 ≤ δ) :
     (latticeCube ℓ 0 ∩ latticeShell ℓ δ : Set Position) =ᵐ[volume]
       ⋃ o : CubeOrientation, latticeChart ℓ (0,o) ⁻¹' (tetrahedron ℓ \ tetrahedron (ℓ-δ)) := by
   filter_upwards [latticeCube_eq_cells_ae hℓ 0] with x hx
-  apply propext
   constructor
   · rintro ⟨hc,hs⟩
     obtain ⟨o,ho⟩ := mem_iUnion.mp (hx.mp hc)
@@ -90,7 +89,7 @@ theorem latticeShell_cube_ae {ℓ δ : ℝ} (hℓ : 0 < ℓ) (hδ : 0 ≤ δ) :
     exact fun h => hs (mem_iUnion.mpr ⟨(0,o),h⟩)
   · intro h
     obtain ⟨o,ho,hs⟩ := mem_iUnion.mp h
-    refine ⟨latticeChart_cell_subset_cube _ ho,?_⟩
+    refine ⟨latticeChart_cell_subset_cube (ℓ := ℓ) (0,o) (a := x) ho,?_⟩
     intro hm
     obtain ⟨p,hp⟩ := mem_iUnion.mp hm
     by_cases he : p = (0,o)

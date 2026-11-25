@@ -193,7 +193,7 @@ theorem truncatedSpeedProduct_gradient (calcRules : TruncationSobolevCalculus)
   have Zm : AEStronglyMeasurable Z volume := by
     have coords (i : Fin 3) : AEMeasurable (fun x => Z x i) volume :=
       (locallyIntegrableOn_univ.mp (weak i).2.1).aestronglyMeasurable.aemeasurable
-    exact ((WithLp.measurable_toLp 2 (Fin 3 → ℝ)).comp_aemeasurable (aemeasurable_pi_lambda _ coords)).aestronglyMeasurable
+    exact ((WithLp.measurable_toLp 2 (Fin 3 → ℝ)).comp_aemeasurable (AEMeasurable.of_eval coords)).aestronglyMeasurable
   let scale := ε^(1-p/2)
   let major := fun x => (4*p)^p*(weightedRoot φ G p x + scale*(D.charge x*φ.hessianNorm x^p))
   have h4 : 0 ≤ (4*p)^p := Real.rpow_nonneg (by positivity) _

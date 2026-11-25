@@ -319,6 +319,10 @@ def rotatingDerivative (α b v du db dw : ℝ) : SpinMatrix :=
   let off := phaseFactor α * ((db : ℂ) + Complex.I * (b * v : ℝ))
   !![(du : ℂ), star off; off, (dw : ℂ)]
 
+private theorem rotatingDerivative_diag (α b v du db dw : ℝ) (j : Fin 2) :
+    rotatingDerivative α b v du db dw j j = if j = 0 then (du : ℂ) else (dw : ℂ) := by
+  fin_cases j <;> simp [rotatingDerivative]
+
 private theorem rotatingDerivative_sq (α b v du db dw : ℝ) :
     (∑ j, ∑ k, ‖rotatingDerivative α b v du db dw j k‖ ^ 2) =
       (∑ j, ∑ k, ‖rotatingDerivative 0 b 0 du db dw j k‖ ^ 2) + 2 * b ^ 2 * v ^ 2 := by
@@ -434,16 +438,14 @@ theorem weak_azimuthal_phase_derivative {φ : Phase} (rules : AzimuthalWeakRules
 /-- Functional calculus commutes with the pointwise spin rotation. -/
 theorem rotate_cfc {M : SpinMatrix} (hM : M.PosSemidef) (α : ℝ) (f : ℝ → ℝ) :
     rotate α (hM.isHermitian.cfc f) = (rotate_posSemidef α hM).isHermitian.cfc f := by
-  let U : Matrix.unitaryGroup (Fin 2) ℂ := ⟨spinRotation α,
+  let U : unitary SpinMatrix := ⟨spinRotation α,
     (Matrix.mem_specialUnitaryGroup_iff.mp (spinRotation_mem_specialUnitaryGroup α)).1⟩
   let e := Unitary.conjStarAlgAut ℂ SpinMatrix U
-  have he (N : SpinMatrix) : e N = rotate α N := rfl
-  have hec : Continuous e := by
-    change Continuous (fun N : SpinMatrix => (U : SpinMatrix) * N * star (U : SpinMatrix))
-    fun_prop
+  have hec : Continuous e := e.toAlgEquiv.toLinearMap.continuous_of_finiteDimensional
   rw [← hM.isHermitian.cfc_eq, ← (rotate_posSemidef α hM).isHermitian.cfc_eq]
   exact StarAlgHomClass.map_cfc (S := ℂ) e f M
-    (by rw [continuousOn_iff_continuous_domRestrict]; fun_prop) hec hM.isHermitian.isSelfAdjoint
+    (by rw [hM.isHermitian.spectrum_real_eq_range_eigenvalues]
+        exact (Set.finite_range _).continuousOn _) hec hM.isHermitian.isSelfAdjoint
     (rotate_posSemidef α hM).isHermitian.isSelfAdjoint
 
 theorem Density.rotate_power_azimuthalFrame (D : Density) (φ : Phase) (s : ℝ) (x : Position) :
@@ -504,21 +506,26 @@ theorem weak_sqrt_gradient_identity (D : Density) (φ : Phase) (rules : Azimutha
     change WeakPartialOn _ _ _ (fun x => phaseFactor (φ.value x) * ((db x i : ℂ) +
       Complex.I * ((b x * φ.grad x i : ℝ) : ℂ)))
     simpa only [Complex.ofReal_mul] using h
+  have diagonal (i : Fin 3) (j : Fin 2) :
+      WeakPartialOn Set.univ i (fun x => D.power (1 / 2) x j j)
+        (fun x => rotatingRootGradient φ b du db dw x i j j) := by
+    have hd (x : Position) : rotatingRootGradient φ b du db dw x i j j = frameRootGradient du db dw x i j j := by
+      simp only [rotatingRootGradient, frameRootGradient, rotatingDerivative_diag]
+    exact (congrArg₂ (WeakPartialOn Set.univ i) (funext (fun x => hdiag x j)) (funext hd)).mpr (hs i j j)
   constructor
   · intro i j k
-    fin_cases j <;> fin_cases k
-    · simp only [hdiag]
-      exact hs i 0 0
+    have cases (a : Fin 2) : a = 0 ∨ a = 1 := by omega
+    rcases cases j with rfl | rfl <;> rcases cases k with rfl | rfl
+    · exact diagonal i 0
     · have hu (x : Position) : star (D.power (1 / 2) x 1 0) = D.power (1 / 2) x 0 1 :=
         (D.power_hermitian _ x).apply 0 1
       have hd (x : Position) : star (rotatingRootGradient φ b du db dw x i 1 0) =
-          rotatingRootGradient φ b du db dw x i 0 1 := rfl
+          rotatingRootGradient φ b du db dw x i 0 1 := by simp [rotatingRootGradient, rotatingDerivative]
       have hg := (hlowD i).conjugate
       simp only [hu, hd] at hg
       exact hg
     · exact hlowD i
-    · simp only [hdiag]
-      exact hs i 1 1
+    · exact diagonal i 1
   · intro x
     dsimp only
     have he := sqrt_offdiagonal_norm_sq (D.azimuthalFrame φ) x

@@ -102,9 +102,9 @@ theorem lattice_variance_integrable (O : TileOrientationLaw)
   have Fn (t u τ) (ht : t ∈ scaleInterval) :
       hartree (fun x => (latticeTotalWindow (t*ℓ) (t*δ) η (O.frame u x-τ)-1)*charge x) = H ((t,u),τ) := by
     unfold H
-    congr 1
+    apply congrArg hartree
     funext x
-    congr 1
+    apply congrArg (fun a : ℝ => a * charge x)
     have h := lattice_fluctuation_dilate (mul_pos (hb t ht) he) 1 s η ((t*ℓ)⁻¹ • (O.frame u x-τ))
     simpa only [g,latticeTotalWindow,mul_one,show (t*ℓ)*s = t*δ by dsimp [s]; field_simp,
       smul_inv_smul₀ (mul_pos (hb t ht) he).ne'] using h

@@ -48,10 +48,10 @@ private theorem dilationLpOn {F : Type*} [NormedAddCommGroup F] {p : ℝ≥0∞}
     {L : ℝ} (hL : 0 < L) :
     MemLp (fun y : Position => f (L⁻¹ • y)) p (volume.restrict ((fun y : Position => L⁻¹ • y) ⁻¹' U)) := by
   have eq := indicator_pullback U f L
-  have hu : MemLp (U.indicator f) p volume := (memLp_indicator_iff_restrict hU).mpr h
+  have hu : MemLp (U.indicator f) p volume := (memLp_indicator_iff_restrict hU.nullMeasurableSet).mpr h
   have hf := dilationLp (f := U.indicator f) hu hL
   rw [eq] at hf
-  exact (memLp_indicator_iff_restrict (hU.preimage (measurable_const_smul _))).mp hf
+  exact (memLp_indicator_iff_restrict (hU.preimage (measurable_const_smul _)).nullMeasurableSet).mp hf
 
 private theorem localLp_spiral {p L : ℝ} {f : Position → ℝ} (h : LocalLpOn univ p f)
     (hL : 0 < L) (a : ℝ) : LocalLpOn univ p (fun y => a*f (L⁻¹ • y)) := by
